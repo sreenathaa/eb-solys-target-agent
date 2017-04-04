@@ -20,6 +20,7 @@ Following tools are needed:
 	libtool
 	curl
 	make
+	git
 
 The external libraries that the EB solys Target Agent (hereinafter called Target Agent) core uses are compiled and deployed together with the Target Agent itself.
 
