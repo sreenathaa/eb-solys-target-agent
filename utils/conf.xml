@@ -1,0 +1,110 @@
+<config>
+	<Network>
+		<!--Port Number For Client Connection -->
+		<Port>1234</Port>
+		<!--Port Number For Command and Control -->
+		<CmdCtrlPort>1235</CmdCtrlPort>
+	</Network>
+	<Logging>
+		<Channels>
+			<Console>
+				<!--Enable writing target agent logs to console / Not Supported under WinCE -->
+				<ChannelActive>true</ChannelActive>
+			</Console>
+			<File>
+				<!--Enable writing target agent logs to console / Not Supported under WinCE -->
+				<ChannelActive>false</ChannelActive>
+			</File>
+			<Socket>
+				<!--Enable writing target agent logs to a TCP socket -->
+				<ChannelActive>true</ChannelActive>
+			</Socket>
+		</Channels>
+		<!-- Logging Level, one of:PRIO_FATAL (highest priority)/ PRIO_CRITICAL/ PRIO_ERROR/ PRIO_WARNING-->
+		<!-- PRIO_NOTICE/ PRIO_INFORMATION/ PRIO_DEBUG/ PRIO_TRACE (lowest priority) -->
+		<LoggingLevel>PRIO_ERROR</LoggingLevel>
+	</Logging>
+	<Recorder>
+		<!--Enable recording the communication to file -->
+		<enabled>true</enabled>
+		<!-- file size limit in Mb zero means not set -->
+		<fileSizeLimit>0</fileSizeLimit>
+		<!--File name prefix: the complete name will contain additionally: -dd.mm.yyyy-hh.mm.ss.mmm-partNumber -->
+		<filePrefix>ta</filePrefix>
+		<!-- Target directory path: empty path means current directory -->
+		<targetDirPath></targetDirPath>
+		<!-- Create intermediate directories if required: this may fail if the right privileges are not provided -->
+		<doCreateOutputPath>false</doCreateOutputPath>
+	</Recorder>
+	<Units>
+		<!--specify how the timestamp will be expressed. Valid Options are: -->
+		<!--time since system boot UP_TIME -->
+		<!--absolute system time ABSOLUTE_SYSTEM_TIME -->
+		<TimeReference>UP_TIME</TimeReference>
+	</Units>
+	<Plugin>
+
+		<dbus-monitor-plugin>
+			<Path attr="./plugins/libdbus-monitor-plugind.so"/>
+		
+			<!-- DBUS_BUS: bus to be observed; must be one of: DBUS_BUS_SESSION, DBUS_BUS_SYSTEM -->
+		
+			<DBUS_BUS attr="DBUS_BUS_SESSION"/>
+		
+			<!-- Add your config Item here: <ConfigItem1 attr="value1"/> -->
+		
+			<!-- Add your config Item here: <ConfigItem1 attr="value1"/> -->
+		
+		</dbus-monitor-plugin>
+		<socket-reader-plugin>
+			<Path attr="./plugins/libsocket-reader-plugind.so"/>
+		
+			<!-- Add your config Item here: <portNumber attr="1111"/> -->
+		
+			<!-- Add your config Item here: <ConfigItem1 attr="value1"/> -->
+		
+			<!-- Add your config Item here: <ConfigItem1 attr="value1"/> -->
+		
+		</socket-reader-plugin>
+		<log4j-plugin>
+			<Path attr="./plugins/liblog4j-plugind.so"/>
+		
+			<!-- Add your config Item here: <log4jLogFile attr="/path/to/logfile/log4jLogFile.log"/> -->
+		
+			<!-- Add your config Item here: <ConfigItem1 attr="value1"/> -->
+		
+			<!-- Add your config Item here: <ConfigItem1 attr="value1"/> -->
+		
+		</log4j-plugin>
+		<resource-monitor-plugin>
+			<Path attr="./plugins/libresource-monitor-plugind.so"/>
+		
+			<!-- Resource Monitor Sampling Rate: the recommended range is [50ms,5000ms] default is 1000ms -->
+		
+			<!-- Setting a sampling rate outside this interval may lead to unreliable measurements-->
+		
+			<!-- Uncomment the line below and adapt it according to your needs-->
+		
+			<samplingRate attr="1000"/>
+		
+			<!-- Observe threads for the process identified by-->
+		
+			<!-- The filename of the executable as displayed in /proc/[pid]/stat-->
+		
+			<!-- all instances of the process will be monitored-->
+		
+			<!-- Uncomment the line below and adapt it according to your needs-->
+		
+			<!-- <procName attr="top"/> -->
+		
+			<!-- Observe threads for the process identified by-->
+		
+			<!-- The process id-->
+		
+			<!-- Uncomment the line below and adapt it according to your needs-->
+		
+			<!-- <procID   attr="1234"/> -->
+		
+		</resource-monitor-plugin>
+	</Plugin>
+</config> 

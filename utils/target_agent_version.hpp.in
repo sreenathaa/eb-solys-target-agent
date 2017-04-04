@@ -1,0 +1,15 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+
+#ifndef TARGET_AGENT_VERSION_CONTROLLER_H_
+#define TARGET_AGENT_VERSION_CONTROLLER_H_
+namespace TargetAgent {
+namespace Version{
+	const unsigned int raceTaProtocolVersion = ${BUILD_NUMBER};
+	const char* const targetAgentVersion = "${TA_VERSION_INFO}";
+};
+};
+#endif /* TARGET_AGENT_VERSION_CONTROLLER_H_ */

@@ -1,0 +1,105 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+
+option java_package = "com.elektrobit.ebrace.protobuf.messagedefinitions";
+option java_outer_classname = "TargetAgentProtocolDBusTAProto";
+
+
+enum DBusCommandResultCode {
+	DBUS_CMD_RESULT_INVALID 		= 0;
+	DBUS_CMD_RESULT_SUCCESS			= 1;
+	DBUS_CMD_RESULT_PARAM_WRONG		= 2;
+	DBUS_CMD_RESULT_EXEC_ERROR		= 3;
+	DBUS_CMD_RESULT_PARSE_ERROR 		= 4;
+	DBUS_CMD_RESULT_CMD_SPECIFIC	 	= 5;
+}
+
+enum DBusInstanceType {
+	DBUS_INSTACE_INVALID		= 0;
+	DBUS_INSTANCE_SESSION_BUS 	= 1;
+	DBUS_INSTANCE_SYSTEM_BUS	= 2;
+	DBUS_INSTANCE_OTHER		= 3;
+}
+
+message DBusApplicationMessage {
+	optional DBusEvtTraceMessage			traceMessage		= 9;
+}
+
+message DBusEvtTraceMessage {
+	required DBusMessageHeader	header 		= 2;
+	optional DBusMessagePayload 	payload		= 3;
+	required DBusInstanceType	instance	= 4;	
+}
+
+message DBusMessageHeader {
+	required	DBusTraceMessageType 			type 		= 1;
+	optional	string 					sender 		= 2; /* sender service name */
+	optional 	string 					receiver 	= 3; /* receiver service name */
+	optional 	int32					sender_pid  	= 4;
+	optional 	int32					receiver_pid  	= 5;
+	optional 	int32					sender_user_id		= 6; 
+	optional 	int32					receiver_user_id	= 7; 
+	repeated	string					sender_alias_names	= 8;
+	repeated	string					receiver_alias_names	= 9;
+	optional 	int32					serial		= 10;
+	optional 	string					path		= 11; /* receiver object path (only for method call)*/
+	optional 	string					interface 	= 12; /* receiver inteface (only for method call)*/
+	optional 	string					member 		= 13; /* receiver member (only for method call)*/
+	optional 	string 					property	= 14;
+	optional 	int32					reply_serial 	= 15; /* serial of message that this is a reply to */ 
+	optional 	string					error_name 	= 16;	
+	optional 	string					method_signature	= 17;
+	optional	string					sender_process_name = 18; /* this field is set on java side only */	
+	optional	string					receiver_process_name = 19; /* this field is set on java side only */		
+}
+
+enum	DBusTraceMessageType {
+	DBUS_MSG_TYPE_INVALID 		= 0;
+	DBUS_MSG_TYPE_METHOD_CALL 	= 1;
+	DBUS_MSG_TYPE_METHOD_RETURN 	= 2;
+	DBUS_MSG_TYPE_SIGNAL 		= 3;
+	DBUS_MSG_TYPE_ERROR 		= 4;
+}
+
+message DBusMessagePayload {
+	repeated DBusMessagePayloadItem param  = 1;
+}
+
+message DBusMessagePayloadItem {
+	
+	required DBusParamType 					type = 1;
+	
+	optional int64						int_val 	= 2;
+	optional uint64						uint_val 	= 3;
+	optional double 					double_val 	= 4;
+	optional string 					str_val		= 5;
+	optional DBusMessagePayloadCompositeItem 		composite_val   = 6;
+}
+
+message DBusMessagePayloadCompositeItem {
+	repeated DBusMessagePayloadItem param = 1;
+}
+
+enum DBusParamType {
+	DBUS_MSG_PARAM_TYPE_INVALID 		= 0;
+	DBUS_MSG_PARAM_TYPE_BYTE 		= 1;
+	DBUS_MSG_PARAM_TYPE_BOOLEAN 		= 2;
+	DBUS_MSG_PARAM_TYPE_INT16 		= 3;
+	DBUS_MSG_PARAM_TYPE_UINT16 		= 4;
+	DBUS_MSG_PARAM_TYPE_INT32 		= 5;
+	DBUS_MSG_PARAM_TYPE_UINT32 		= 6;
+	DBUS_MSG_PARAM_TYPE_INT64 		= 7;
+	DBUS_MSG_PARAM_TYPE_UINT64 		= 8;
+	DBUS_MSG_PARAM_TYPE_DOUBLE 		= 9;
+	DBUS_MSG_PARAM_TYPE_STRING 		= 10;
+	DBUS_MSG_PARAM_TYPE_OBJ_PATH 		= 11;
+	DBUS_MSG_PARAM_TYPE_SIGNATURE 		= 12;
+	DBUS_MSG_PARAM_TYPE_ARRAY 		= 13;
+	DBUS_MSG_PARAM_TYPE_STRUCT 		= 14;
+	DBUS_MSG_PARAM_TYPE_VARIANT 		= 15;
+	DBUS_MSG_PARAM_TYPE_DICT_ENTRY 		= 16;
+	DBUS_MSG_PARAM_TYPE_UNIX_FD 		= 17;
+}

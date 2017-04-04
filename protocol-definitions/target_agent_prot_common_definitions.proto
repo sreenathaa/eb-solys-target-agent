@@ -1,0 +1,56 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+package TargetAgent.Protocol.CommonDefinitions;
+
+option java_package = "com.elektrobit.ebrace.targetagent.protocol.commondefinitions";
+option java_outer_classname = "TargetAgentProtocolCommonDefinitions";
+
+enum ProtHndlrMessageTypesVersion 
+{
+	PROT_HNDLR_MESSAGE_TYPES_VERSION = 1;
+}
+
+
+enum MessageType 
+{
+	MSG_TYPE_INVALID  			 			 = 0;
+	MSG_TYPE_DBUS 				 			 = 1;
+	MSG_TYPE_RESOURCE_MONITOR 		 		 = 2;
+	MSG_TYPE_PROT_HNDLR_CONTROL 		 	 = 3;
+	MSG_TYPE_PACKAGE_MONITOR 			   	 = 4;
+	MSG_TYPE_3G_PLUS_JVM_MONITOR			 = 5;
+	MSG_TYPE_3G_PLUS_TERMINAL_MONITOR		 = 6;
+    MSG_TYPE_NAVIDATAPOOLEVENT_MONITOR  	 = 7;
+	MSG_TYPE_GENIVI_SYSTEMD_START_UP_MONITOR = 8;
+	MSG_TYPE_GENIVI_TEMPLATE_PLUGIN          = 9;
+	MSG_TYPE_GENIVI_DLT_MONITOR_PLUGIN       = 10;
+	MSG_TYPE_THREAD_OBSERVER_PLUGIN 	 	 = 11;
+	MSG_TYPE_GENIVI_CTRACER_PLUGIN		 	 = 12;
+	MSG_TYPE_MOST_SPY_MONITOR_PLUGIN	 	 = 13;
+	MSG_TYPE_SOCKET_READER_PLUGIN		 	 = 14;
+	MSG_TYPE_SIMPLE_STRING_PLUGIN			 = 15;
+	MSG_TYPE_EVM_PLUGIN			 			 = 16;
+	MSG_TYPE_WM_PLUGIN			 			 = 17;
+	MSG_TYPE_SINGLETON_GATEWAY_PLUGIN		 = 18;
+	MSG_TYPE_THREAD_HEAP_STATS_PLUGIN		 = 19;
+	MSG_TYPE_LINUX_APP_STATS_PLUGIN		 	 = 20;
+	MSG_TYPE_GTF                             = 21;
+	MSG_TYPE_RMTEST_PLUGIN  				 = 22;
+	MSG_TYPE_LOGGINGTESTS_PLUGIN  			 = 23;
+	MSG_TYPE_DBUSCMDCTRL_PLUGIN  			 = 25;
+	MSG_TYPE_SIMPLEREMOTESHELL_PLUGIN		 = 26;
+	MSG_TYPE_POSIX_MSG_QUEUES_PLUGIN  		 = 27;
+	MSG_TYPE_LOG4J_PLUGIN  					 = 28;
+//	MSG_TYPE_LAST  							 =29;
+	MSG_TYPE_CHRONOGRAPH_CALIBRATION	 	 = 99;
+}
+
+/* deprecated */
+message Timestamp {
+	required int64 milliseconds = 1;
+	optional int32 microseconds = 2;	
+}
+

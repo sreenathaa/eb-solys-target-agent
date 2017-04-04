@@ -1,0 +1,74 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+package TargetAgent.Protocol.Ctrl;
+
+option java_package = "com.elektrobit.ebrace.targetagent.protocol.ctrl";
+option java_outer_classname = "TargetAgentProtocolCtrl";
+
+import "target_agent_prot_common_definitions.proto";
+
+
+/* Note: The following enums contain version information (major and minor) about the ProtocolHandlerControlApplicationProtocol.
+		 The enums are used as "Constants" due to ProtocolBuffers doesnt provide a simiuliar mechanism. 
+		 Each enum shall only contain ONE value. Each time you change the Protocol, increment the major and/or minor version. 
+		 Your program has to decide how to handle older/newer versions than the expected one !*/
+
+		 
+enum ProtHndlrCtrlMajorVersion {
+	PROT_HNDLR_CTRL_MAJOR_VERSION = 1;
+}
+
+enum ProtHndlrCtrlMinorVersion {
+	PROT_HNDLR_CTRL_MINOR_VERSION = 0;
+}
+
+/* Relax-Time between two heartbeat-requests */
+enum ProtHndlrCtrlHeartbeatRequestTimeout {
+	PROT_HNDLR_CTRL_HEARTBEAT_REQUEST_TIMEOUT = 3000;
+}
+
+/* Maximum Time allowed to resond a heartbeat-request */
+enum ProtHndlrCtrlHeartbeatResponseTimeout {
+	PROT_HNDLR_CTRL_HEARTBEAT_RESPONSE_TIMEOUT = 2000;
+}
+
+
+
+/* The protocol-layer has its onw little "app-specific" protocol to share information about version, connection-status, etc. */
+
+enum ProtHandlerCtrlMessageId {
+	PROT_HNDLR_CTRL_MESSAGE_INVALID 				= 0;
+	PROT_HNDLR_CTRL_CMD_GET_VERSION_INFO_ID 		= 1;
+	PROT_HNDLR_CTRL_CMD_TERMINATE_CONNECTION_ID 	= 2;
+
+	PROT_HNDLR_CTRL_CMD_HEARTBEAT_REQUEST_MSG_ID	= 3;
+	
+	PROT_HNDLR_CTRL_HEARTBEAT_MSG_ID				= 10;
+
+	PROT_HNDLR_CTRL_EVT_HEARTBEAT_RESPONSE_MSG_ID	= 11;
+	
+	PROT_HNDLR_CTRL_EVT_VERSION_INFO_ID				= 20;	
+}
+
+
+
+message ProtHandlerCtrlMessage {
+
+	required ProtHandlerCtrlMessageId							id = 1;
+	
+	optional TargetAgent.Protocol.CommonDefinitions.Timestamp	timestamp = 2;
+	optional ProtHandlerCtrlEvtVersionInfo 						versionInfo = 20;	
+	
+	/* Note: PROT_HNDLR_CTRL_CMD_GET_VERSION_INFO_ID doesnt need any payload ! */
+	/* Note: PROT_HNDLR_CTRL_CMD_TERMINATE_CONNECTION_ID doesnt need any payload ! */	
+	/* Note: PROT_HNDLR_CTRL_HEARTBEAT_MSG_ID doesnt need any payload ! */
+}
+
+
+message ProtHandlerCtrlEvtVersionInfo {
+	required	int32	majorVersion = 1;	/*Note: The defined version in enum shall be transmitted as int32. othwerwise a mismatch leads to a parse-error, which may not be desired  */
+	required	int32	minorVersion = 2; 
+}

@@ -1,0 +1,35 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+package TargetAgent.Protocol.Frame;
+
+option java_package = "com.elektrobit.ebrace.targetagent.protocol.frame";
+option java_outer_classname = "TargetAgentProtocolFrame";
+import "target_agent_prot_common_definitions.proto";
+
+
+message Header {
+	required int32 length = 1;
+	required TargetAgent.Protocol.CommonDefinitions.MessageType type = 2;
+	required int64 timestamp = 3;
+	required uint32 versionToken = 4;
+	repeated MetaData metaDataInfo = 5;
+}
+
+message MetaData {
+	required string key = 1;
+	required string value = 2;
+}
+
+
+
+
+
+
+
+
+
+
+

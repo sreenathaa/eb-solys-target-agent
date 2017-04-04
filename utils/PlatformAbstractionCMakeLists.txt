@@ -1,0 +1,177 @@
+#---------------------------------------------------------------------
+# Global system variables:
+#---------------------------------------------------------------------
+# EXECUTABLE_OUTPUT_PATH: linux PATH/to/bin/BUILD_FOLDER_NAME | win32 PATH/to/bin
+# IS_RELEASE_BUILD: 0 = Debug, 1 = Release
+# BUILD_FOLDER_NAME: release | debug // for right folder to use
+# DEBUG_SUFFIX: if(debug) then 'd' else ''
+# TARGET_SYSTEM: win32 | Linux | Unix - unsupported | unknown
+# LIBRARY_OUTPUT_PATH: = EXECUTABLE_OUTPUT_PATH
+#---------------------------------------------------------------------
+# Global system variables end:
+#---------------------------------------------------------------------
+
+
+#SET(CMAKE_BUILD_TYPE "Build type" CACHE STRING "Select your build type")
+#SET_PROPERTY(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release) 
+
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Select build type")
+#FORCE)
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release)
+MESSAGE( STATUS "CMAKE_BUILD_TYPE before" ${CMAKE_BUILD_TYPE})
+IF(DEFINED CMAKE_BUILD_TYPE)
+if (CMAKE_BUILD_TYPE STREQUAL "")
+     set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif ()
+
+   SET(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of
+build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug
+Release RelWithDebInfo MinSizeRel.")
+MESSAGE( STATUS "it is defined" ${CMAKE_BUILD_TYPE})
+ELSE()
+   SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build,
+options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release
+RelWithDebInfo MinSizeRel.")
+MESSAGE( STATUS "it is undefined" ${CMAKE_BUILD_TYPE})
+ENDIF()
+MESSAGE( STATUS "CMAKE_BUILD_TYPE after" ${CMAKE_BUILD_TYPE})
+
+set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "Set debug library postfix" FORCE)
+
+#Check for RELEASE or DEBUG-Option
+IF(${CMAKE_BUILD_TYPE} MATCHES "Release")
+	SET(IS_RELEASE_BUILD 1)
+	SET(BUILD_FOLDER_NAME "release")
+ELSE()
+	SET(IS_RELEASE_BUILD 0)
+	SET(BUILD_FOLDER_NAME "debug")
+    set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "Set debug library postfix" FORCE)
+ENDIF()
+
+STRING (REGEX REPLACE "/src$" "" PROJECT_ROOT_FOLDER ${CMAKE_SOURCE_DIR})
+SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/${BUILD_FOLDER_NAME} )
+#CACHE PATH "PATH to binary folder" INTERNAL)
+SET(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+#STRING (REGEX REPLACE "/src$" "" PROJECT_ROOT_FOLDER ${CMAKE_SOURCE_DIR})
+#SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin CACHE PATH "PATH to binary folder")
+SET(TA_LOCAL_ENABLE_TESTING OFF CACHE BOOL "Enable testing")
+
+#Check for RELEASE or DEBUG-Option if DEBUG is enabled tests are enabled
+IF(${CMAKE_BUILD_TYPE} MATCHES "Release")
+	SET(IS_RELEASE_BUILD 1)
+	SET(BUILD_FOLDER_NAME "release")
+	SET(LOCAL_ENABLE_TESTING 0)
+ELSEIF(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+	SET(IS_RELEASE_BUILD 0)
+	SET(BUILD_FOLDER_NAME "debug")
+    set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "Set debug library postfix" FORCE)
+   	IF(${CMAKE_SYSTEM_NAME} MATCHES "QNX") 
+	   SET(LOCAL_ENABLE_TESTING 0)
+	ENDIF()	
+ELSE()
+	Message( FATAL_ERROR "No supported build type selected")
+ENDIF()
+
+IF(${LOCAL_ENABLE_TESTING})
+	enable_testing()
+	add_definitions(-DLOCAL_ENABLE_TESTING)
+
+ENDIF()
+
+SET(DEBUG_SUFFIX ${CMAKE_DEBUG_POSTFIX} CACHE STRINGS "setting debug suffix" FORCE)
+
+
+#Check for Target-System
+IF(${CMAKE_SYSTEM_NAME} MATCHES "QNX") 
+        SET(TARGET_SYSTEM "QNX")
+        SET(TARGET_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
+ELSEIF(UNIX)
+        IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+            SET(TARGET_SYSTEM "linux")
+            SET(TARGET_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
+            ADD_DEFINITIONS("-Wall -Wno-unknown-pragmas")
+        ELSE()
+            SET(TARGET_SYSTEM "Unix - unsupported")     
+            SET(TARGET_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
+        ENDIF()
+ELSEIF(WIN32)
+        SET(TARGET_SYSTEM "win32")
+ELSE()
+        SET(TARGET_SYSTEM "unknown")
+ENDIF()
+
+
+#---------------------------------------------------------------------
+# System depending variables:
+#---------------------------------------------------------------------
+# LIBRARY_OUTPUT_PATH: PATH where libaries shoud go
+# LIBRARY_EXTENSION: .dll | .so
+#---------------------------------------------------------------------
+# System depending variables end:
+#---------------------------------------------------------------------
+
+IF(${TARGET_SYSTEM} STREQUAL "win32")
+	SET(LIBRARY_EXTENSION ".dll")
+	SET(STATIC_LIBRARY_EXTENSION ".lib")
+	SET(LINUX_LIB_PREFIX "")
+	SET(EXE_EXTENTION ".exe")
+ELSE()
+	SET(LIBRARY_EXTENSION ".so")
+	SET(STATIC_LIBRARY_EXTENSION ".a")
+	SET(LINUX_LIB_PREFIX "lib")
+	SET(EXE_EXTENTION "")
+ENDIF()
+
+SET(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+#---------------------------------------------------------------------
+# Global extern variables:
+#---------------------------------------------------------------------
+# POCO_LIB_PATH:
+# POCO_BIN_PATH:
+# POCO_INCLUDE_DIR: Poco headers
+# POCO_LIB_FOUNDATION:
+# POCO_LIB_UTIL:
+# POCO_LIB_NET:
+# POCO_LIB_XML:
+# PROTO_BUF_INCLUDE_DIR: Protobuf headers
+# PROTO_BUF_LIB_PATH:
+# PROTO_BUF_LIB:
+# GTEST_INCLUDE_DIR: GTest headers
+# GTEST_LIB:
+# GMOCK_INCLUDE_DIR: GMock headers
+# GMOCK_LIB:
+#---------------------------------------------------------------------
+# Global extern variables end:
+#---------------------------------------------------------------------
+
+# Poco
+GET_PROPERTY(POCO_LIB_PATH GLOBAL PROPERTY POCO_LIB_PATH)
+GET_PROPERTY(POCO_BIN_PATH GLOBAL PROPERTY POCO_BIN_PATH)
+GET_PROPERTY(POCO_INCLUDE_DIR GLOBAL PROPERTY POCO_INCLUDE_DIR)
+GET_PROPERTY(POCO_LIB_CRYPTO GLOBAL PROPERTY POCO_LIB_CRYPTO)
+GET_PROPERTY(POCO_LIB_FOUNDATION GLOBAL PROPERTY POCO_LIB_FOUNDATION)
+GET_PROPERTY(POCO_LIB_UTIL GLOBAL PROPERTY POCO_LIB_UTIL)
+GET_PROPERTY(POCO_LIB_NET GLOBAL PROPERTY POCO_LIB_NET)
+GET_PROPERTY(POCO_LIB_XML GLOBAL PROPERTY POCO_LIB_XML)
+GET_PROPERTY(POCO_SHARED_LIB_VERSION GLOBAL PROPERTY POCO_SHARED_LIB_VERSION)
+# Protobuf
+GET_PROPERTY(PROTO_BUF_INCLUDE_DIR GLOBAL PROPERTY PROTO_BUF_INCLUDE_DIR)
+GET_PROPERTY(PROTO_BUF_LIB_PATH GLOBAL PROPERTY PROTO_BUF_LIB_PATH)
+GET_PROPERTY(PROTO_BUF_LIB GLOBAL PROPERTY PROTO_BUF_LIB)
+GET_PROPERTY(PROTO_BUF_SHARED_LIB_VERSION GLOBAL PROPERTY PROTO_BUF_SHARED_LIB_VERSION)
+#gTest
+GET_PROPERTY(GTEST_INCLUDE_DIR GLOBAL PROPERTY GTEST_INCLUDE_DIR)
+GET_PROPERTY(GTEST_LIB GLOBAL PROPERTY GTEST_LIB)
+#gMock
+GET_PROPERTY(GMOCK_INCLUDE_DIR GLOBAL PROPERTY GMOCK_INCLUDE_DIR)
+GET_PROPERTY(GMOCK_LIB GLOBAL PROPERTY GMOCK_LIB)
+
+
+STRING (REGEX REPLACE "/src$" "" PROJECT_ROOT_FOLDER ${CMAKE_SOURCE_DIR})
+
+SET(COMMON_PLUGIN_INTERFACE_INCLUDE_DIR  ${PROJECT_ROOT_FOLDER}/target-agent/modules/plugin-interface/inc)
+SET(COMMON_PLUGIN_INTERFACE_GEN_DIR      ${PROJECT_ROOT_FOLDER}/target-agent/modules/plugin-interface/gen)
+#SET(POCO_INCLUDE_DIRECTORIES 	${POCO_INC_BASE_PATH})
+SET(COMMON_PLUGIN_INTERFACE_LIB plugin-interface${DEBUG_SUFFIX})

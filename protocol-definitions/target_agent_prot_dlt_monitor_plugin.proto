@@ -1,0 +1,72 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+package TargetAgent.Protocol.DLTLogInspector;
+
+option java_package = "com.elektrobit.ebrace.targetagent.protocol.dltloginspector";
+option java_outer_classname = "TargetAgentProtocolDLTLogInspector";
+
+enum DLTLogInspectorMessageId {
+ LOG_ANALYZER_MESSAGE_INVALID     = 0;
+ LOG_ANALYZER_MESSAGE_TRACE       = 1;
+}
+
+
+enum DLTMessageType {
+	DLT_TYPE_LOG       = 0;
+	DLT_TYPE_APP_TRACE = 1;
+	DLT_TYPE_NW_TRACE  = 2;
+	DLT_TYPE_CONTROL   = 3;
+}
+
+enum MsgLogInfo {
+	DLT_LOG_FATAL    = 1;
+	DLT_LOG_ERROR    = 2;
+	DLT_LOG_WARN     = 3;
+	DLT_LOG_INFO     = 4;
+	DLT_LOG_DEBUG    = 5;
+	DLT_LOG_VERBOSE  = 6;
+}
+
+enum MsgTraceInfo {
+	DLT_TRACE_VARIABLE 	  = 1;
+	DLT_TRACE_FUNCTION_IN = 2;
+	DLT_TRACE_FUNCTION_OUT =3;
+	DLT_TRACE_STATE        =4;
+	DLT_TRACE_VFB          =5;
+}
+
+enum MsgBusInfo {
+	DLT_NW_TRACE_IPC 	  = 1;
+	DLT_NW_TRACE_CAN 	  = 2;
+	DLT_NW_TRACE_FLEXRAY  = 3;
+	DLT_NW_TRACE_MOST     = 4;
+}
+
+enum MsgControlInfo {
+	DLT_CONTROL_REQUEST 	= 1;
+	DLT_CONTROL_RESPONSE    = 2;
+	DLT_CONTROL_TIME        = 3;
+}
+
+ 
+message DLTLogInspectorMessage {
+ required DLTLogInspectorMessageId      id = 1;
+ optional DLTLogInspectorTraceMessage   trace_message = 2;
+}
+
+
+message DLTLogInspectorTraceMessage {
+ optional string timestamp           = 1;
+ required DLTMessageType messageType = 2;
+ optional MsgLogInfo logInfo         = 3;
+ optional MsgTraceInfo traceInfo     = 4;
+ optional MsgBusInfo busInfo         = 5;
+ optional MsgControlInfo controlInfo = 6;
+ optional string channel             = 7;
+ required string data                = 8;  
+ optional string context             = 9;
+}
+

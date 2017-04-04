@@ -1,0 +1,44 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+package TargetAgent.Protocol.SocketReader;
+
+option java_package = "com.elektrobit.ebrace.protobuf.messagedefinitions";
+option java_outer_classname = "SocketReaderTAProto";
+
+enum SocketReaderMessageType {
+	SOCKET_READER_MESSAGE = 0;
+	TARGET_AGENT_MESSAGE = 1;
+}
+
+enum SocketReaderMessageEncoding {
+	Encoding_Base64 = 0;
+	Encoding_PlainAscii = 1;
+}
+
+message SocketReaderMessage {
+	required SocketReaderMessageType type = 1;
+	required SocketReaderInnerMessage message = 2;
+	required SocketReaderMessageEncoding encoding = 3;
+}
+
+message SocketReaderInnerMessage {
+	optional string timestamp = 1;
+	required int64 portNo = 2;
+	required string data = 3;
+}
+
+
+/*internal protocol for logging*/
+message Header {
+	required int32 payloadLength = 1;
+	required SocketReaderMessageType messageType = 2;
+}
+
+message SocketBasedCommunication {
+	required Header header = 1;
+	required string payload = 2;
+}
+

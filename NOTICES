@@ -1,0 +1,29 @@
+Target Agent makes use of the following open source projects.
+
+- POCO C++ Library
+
+URL: https://github.com/emma3826/poco/tree/poco-1.6.1
+Version: 1.6.1
+License: Boost Software License 1.0
+Copyright Notices: See ./target-agent/extern/3rdparty/poco/CONTRIBUTORS
+License Text: See ./target-agent/extern/3rdparty/poco/LICENSE
+
+- Protocol Buffers
+
+URL: https://github.com/emma3826/protobuf/tree/cmake_integration
+Version: 2.6.1
+License: Protobuf License
+Copyright Notices: See ./target-agent/extern/3rdparty/protobuf/CONTRIBUTORS.txt
+License Text: See ./target-agent/extern/3rdparty/protobuf/LICENSE
+
+- Google C++ Testing Framework
+
+URL: https://github.com/google/googletest/archive/release-1.5.0.tar.gz
+Version: 1.5.0
+License: BSD-3-Clause License
+
+- Google Mock
+
+URL: https://github.com/google/googlemock/archive/release-1.5.0.tar.gz
+Version: 1.5.0
+License: BSD-3-Clause License

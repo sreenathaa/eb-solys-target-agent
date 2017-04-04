@@ -1,0 +1,86 @@
+/*******************************************************************************
+ * Copyright 2017, Elektrobit Automotive GmbH. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *******************************************************************************/
+option java_package = "com.elektrobit.ebrace.genivi.targetadapter.resourcemonitor.protobuf";
+
+option java_outer_classname = "TargetAgentProtocolResMon";
+
+message ResourceInfo{
+
+	optional SystemInfo	system = 1;
+
+	repeated ProcessInfo	process = 2;
+
+}
+
+message SystemInfo {
+	required uint32 numberOfCores   	= 1;    /* The number of processors currently online */
+
+	required uint64	totalVmMemBytes 	= 2;	/* total Virtual Memory available on the system */
+
+	required uint64	usedVmMemBytes 		= 3;	/* used Virtual Memory system wise */
+	
+	required uint64	totalPmMemBytes 	= 4;	/* total Physical Memory available on the system */
+
+	required uint64	usedPmMemBytes 		= 5;	/* used Physical Memory available on the system */
+}
+
+message ProcessInfo {
+	
+	required int64	pid 				= 1; /*	unique process identifier */
+	
+	required string name 				= 2; /*	process name */
+	
+	optional uint64	timeInKernelModeMs 	= 3; /*	time in milliseconds spent in kernel mode*/
+
+	optional uint64	timeInUserModeMs 	= 4; /*	time in milliseconds spent in user mode*/
+	
+	optional uint64	vmUsageBytes		= 5; /*	the amount of virtual memory expressed in bytes */
+
+	repeated ThreadInfo	threads 		= 7; /*	memory and CPU info for the thread list of the process if observed */
+}
+
+message ThreadInfo {
+
+	required int64	tid 				= 1; /*	unique process identifier */
+	
+	required string name 				= 2; /*	process name */
+	
+	optional uint64	timeInKernelModeMs 	= 3; /*	time in milliseconds spent in kernel mode*/
+
+	optional uint64	timeInUserModeMs 	= 4; /*	time in milliseconds spent in user mode*/
+	
+	optional uint64	vmBytes				= 5; /*	the amount of virtual memory expressed in bytes */	
+	
+	optional string state				= 6; /* One char describing the runnign state of the thread: Already consacrated symbols are used
+							       Linux:
+							       *R  Running
+								S  Sleeping in an interruptible wait
+								D  Waiting in uninterruptible disk sleep
+								Z  Zombie
+								T  Stopped (on a signal) or (before Linux 2.6.33)
+									trace stopped
+								t  Tracing stop (Linux 2.6.33 onward)
+								W  Paging (only before Linux 2.6.0)
+								X  Dead (from Linux 2.6.0 onward)
+								x  Dead (Linux 2.6.33 to 3.13 only)
+								K  Wakekill (Linux 2.6.33 to 3.13 only)
+								W  Waking (Linux 2.6.33 to 3.13 only)
+								P  Parked (Linux 3.9 to 3.13 only)
+							      */ /*
+								Value	Thread State		Description
+								Running	Thread is running	The thread is running.
+								Runnabl	Thread is able to run	The thread can run and will do so when the OS reaches the next time slice at that thread's priority.
+								Blockd	Thread is blocked	The thread is blocked on a resource, which can be one or more events, mutexes, or critical sections.
+								Suspnd	Thread is suspended	The thread was suspended by a call to the SuspendThread function.
+								Sleep	Thread is sleeping	The thread called the Sleep function.
+								Sl/Blk	Thread is blocked and sleeping	The thread is blocked on a resource, which can be one or more events, mutexes, or critical sections, and the thread has called the Sleep function.
+								*/
+
+	optional uint64 timestamp 			= 7; /* Added the time stamp for individual threads for better CPU consumption calculation. */
+
+	optional int32 priority 			= 8; /* Added thread priority. */
+    
+}

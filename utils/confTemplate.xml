@@ -1,0 +1,48 @@
+<config>
+	<Network>
+		<!--Port Number For Client Connection -->
+		<Port>1234</Port>
+		<!--Port Number For Command and Control -->
+		<CmdCtrlPort>1235</CmdCtrlPort>
+	</Network>
+	<Logging>
+		<Channels>
+			<Console>
+				<!--Enable writing target agent logs to console / Not Supported under WinCE -->
+				<ChannelActive>true</ChannelActive>
+			</Console>
+			<File>
+				<!--Enable writing target agent logs to console / Not Supported under WinCE -->
+				<ChannelActive>false</ChannelActive>
+			</File>
+			<Socket>
+				<!--Enable writing target agent logs to a TCP socket -->
+				<ChannelActive>true</ChannelActive>
+			</Socket>
+		</Channels>
+		<!-- Logging Level, one of:PRIO_FATAL (highest priority)/ PRIO_CRITICAL/ PRIO_ERROR/ PRIO_WARNING-->
+		<!-- PRIO_NOTICE/ PRIO_INFORMATION/ PRIO_DEBUG/ PRIO_TRACE (lowest priority) -->
+		<LoggingLevel>PRIO_ERROR</LoggingLevel>
+	</Logging>
+	<Recorder>
+		<!--Enable recording the communication to file -->
+		<enabled>true</enabled>
+		<!-- file size limit in Mb zero means not set -->
+		<fileSizeLimit>0</fileSizeLimit>
+		<!--File name prefix: the complete name will contain additionally: -dd.mm.yyyy-hh.mm.ss.mmm-partNumber -->
+		<filePrefix>ta</filePrefix>
+		<!-- Target directory path: empty path means current directory -->
+		<targetDirPath></targetDirPath>
+		<!-- Create intermediate directories if required: this may fail if the right privileges are not provided -->
+		<doCreateOutputPath>false</doCreateOutputPath>
+	</Recorder>
+	<Units>
+		<!--specify how the timestamp will be expressed. Valid Options are: -->
+		<!--time since system boot UP_TIME -->
+		<!--absolute system time ABSOLUTE_SYSTEM_TIME -->
+		<TimeReference>UP_TIME</TimeReference>
+	</Units>
+	<Plugin>
+${PLUGINS_TO_LOAD}
+	</Plugin>
+</config> 
