@@ -39,7 +39,7 @@ For example
 
 ##  2.	Native Compilation
 
-	export PATH_TO_SOURCES=”Target Agent source code”
+	export PATH_TO_SOURCES="repository root"
 	export PATH_TO_INSTALL=$PATH_TO_SOURCES/../install
 	mkdir $PATH_TO_INSTALL
 	mkdir $PATH_TO_SOURCES/../build
@@ -61,12 +61,12 @@ Start the target agent with the --help parameter for information related to the 
 
 ##  4. Cross Compilation
 
-	export PATH_TO_SOURCES=”Target Agent source code”
+	export PATH_TO_SOURCES="repository root"
 	export PATH_TO_INSTALL=$PATH_TO_SOURCES/../install
 	mkdir $PATH_TO_INSTALL
 	mkdir $PATH_TO_SOURCES/../build
 	cd $PATH_TO_SOURCES/../build
-	export TOOLCHAIN=”path to cmake toolchain”
+	export TOOLCHAIN="path to cmake toolchain"
 
 	cmake $PATH_TO_SOURCES -DTA_PLUGIN_dbus-monitor-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release" -DCMAKE_INSTALL_PREFIX=$PATH_TO_INSTALL -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN
 
