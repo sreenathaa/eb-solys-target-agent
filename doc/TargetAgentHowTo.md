@@ -1,4 +1,4 @@
-﻿# EB solys Target Agent Usage Guide
+# EB solys Target Agent Usage Guide
 
 ## Content
 
@@ -8,8 +8,9 @@
 	4. Cross Compilation
 	5. Target Agent and plug-in configuration
 
-##  1.	Compile Target Agent
+##  1. Dependencies
 
+Currently the compilation of EB solys Target Agent can only be done on a Linux system.
 
 Following tools are needed:
 
