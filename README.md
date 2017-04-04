@@ -8,4 +8,4 @@ The plug-ins are used to acquire any kind of runtime data, such as resource cons
 
 ## Getting Started
 
-In order to compile and run the Target Agent read the Getting Started guide: [Getting Started](https://github.com/Elektrobit/eb-solys-target-agent/blob/master/doc/TargetAgentHowTo.md)
+In order to compile, configure and run the Target Agent read the following guide: [TargetAgentGettingStarted](https://github.com/Elektrobit/eb-solys-target-agent/blob/master/doc/TargetAgentGettingStarted.md)
