@@ -81,11 +81,7 @@ extern "C" {
         const char* fileName = "filter.txt";
 
         dlt_client_init(&(ctx->dltclient), DLT_NOT_VERBOSE);
-
-        /* initialise structure to use DLT file */
         dlt_file_init(&(ctx->file), DLT_NOT_VERBOSE);
-
-        /* first parse filter file if filter parameter is used */
         dlt_filter_init(&(ctx->filter), DLT_NOT_VERBOSE);
 
         if (dlt_filter_load(&(ctx->filter), fileName, DLT_NOT_VERBOSE) < 0)
@@ -96,10 +92,7 @@ extern "C" {
         }
 
         dlt_file_set_filter(&(ctx->file), &(ctx->filter), DLT_NOT_VERBOSE);
-
-        /* initialising dlt client structure */
         dlt_client_register_message_callback(&dlt_receive_message_callback);
-        (ctx->dltclient).serial_mode = DLT_NOT_SERIAL;
         (ctx->dltclient.servIP) = "localhost";
 
         if (dlt_client_connect(&(ctx->dltclient), DLT_NOT_VERBOSE) != -1)
