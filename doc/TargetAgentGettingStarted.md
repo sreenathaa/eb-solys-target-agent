@@ -39,13 +39,9 @@ For example
 
 ##  2.	Native Compilation
 
-	export PATH_TO_SOURCES="repository root"
-	export PATH_TO_INSTALL=$PATH_TO_SOURCES/../install
-	mkdir $PATH_TO_INSTALL
-	mkdir $PATH_TO_SOURCES/../build
-	cd $PATH_TO_SOURCES/../build
-
-	cmake $PATH_TO_SOURCES -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release" -DCMAKE_INSTALL_PREFIX=$PATH_TO_INSTALL
+	mkdir build
+	cd build
+	cmake ../ -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release" -DCMAKE_INSTALL_PREFIX=$PATH_TO_INSTALL
 	make all
 	make install
 
