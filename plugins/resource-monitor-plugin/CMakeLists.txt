@@ -11,7 +11,7 @@ PROJECT ( ResourceMonitorPlugin )
 #SH4	     x		|	x	|	x	|
 #AMD64	     x		|	x	|	x	|
 set(resource_monitor_platformSupportMatrix  "0 0 1|0 0 1|0 0 1|0 0 0|0 0 0|0 0 0" PARENT_SCOPE)
-set(resource_monitor_Capabilities "\t\t<${plugin}>\n\t\t\t<Path attr=\"./plugins/${LINUX_LIB_PREFIX}${plugin}${DEBUG_SUFFIX}${LIBRARY_EXTENSION}\"/>
+set(resource_monitor_Capabilities "\t\t<${plugin}>\n\t\t\t<Path attr=\"./plugins/${file_name}\"/>
 		\n\t\t\t<!-- Resource Monitor Sampling Rate: the recommended range is [50ms,5000ms] default is 1000ms -->
 		\n\t\t\t<!-- Setting a sampling rate outside this interval may lead to unreliable measurements-->
 		\n\t\t\t<!-- Uncomment the line below and adapt it according to your needs-->
@@ -71,7 +71,7 @@ ELSE()
   TARGET_LINK_LIBRARIES(resource-monitor-plugin ${PROTO_BUF_LIB} ${POCO_LIB_FOUNDATION} pthread)
 ENDIF()	
 
-INSTALL(FILES ${CMAKE_BINARY_DIR}/bin/${BUILD_FOLDER_NAME}/${LINUX_LIB_PREFIX}resource-monitor-plugin${DEBUG_SUFFIX}${LIBRARY_EXTENSION} DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins)
+INSTALL(TARGETS resource-monitor-plugin LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins/)
 
 IF (CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g -O0 -Wall -fprofile-arcs -ftest-coverage")
@@ -86,8 +86,8 @@ IF(${TA_LOCAL_ENABLE_TESTING})
   ADD_DEFINITIONS("-Wall -Wno-unknown-pragmas")
   SET(RESOURCE_MONITOR_TEST_LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test/resource-monitor-plugin-test.cpp)
 
-  ADD_EXECUTABLE(resource-monitor-plugin${DEBUG_SUFFIX}-test ${RESOURCE_MONITOR_TEST_LIB_SRC})
- target_include_directories(resource-monitor-plugin${DEBUG_SUFFIX}-test
+  ADD_EXECUTABLE(resource-monitor-plugin-test ${RESOURCE_MONITOR_TEST_LIB_SRC})
+ target_include_directories(resource-monitor-plugin-test
     PUBLIC
         $<BUILD_INTERFACE:
 			 ${POCO_INCLUDE_DIR} 
@@ -104,7 +104,7 @@ IF(${TA_LOCAL_ENABLE_TESTING})
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
   TARGET_LINK_LIBRARIES(
-	  resource-monitor-plugin${DEBUG_SUFFIX}-test
+	  resource-monitor-plugin-test
 	  ${PROTO_BUF_LIB}
 	  ${POCO_LIB_FOUNDATION}
 	  resource-monitor-plugin
@@ -114,8 +114,8 @@ IF(${TA_LOCAL_ENABLE_TESTING})
 	  )
   
   add_test(
-    NAME resource-monitor-plugin${DEBUG_SUFFIX}-test
-    COMMAND resource-monitor-plugin${DEBUG_SUFFIX}-test
+    NAME resource-monitor-plugin-test
+    COMMAND resource-monitor-plugin-test
   )
   
       

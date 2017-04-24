@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 PROJECT ( solys-agent )
 
@@ -221,6 +221,10 @@ SUBDIRLIST(SUBDIRS ${CMAKE_SOURCE_DIR}/plugins)
 	
 	SET(qualified_plugin_name TA_PLUGIN_${plugin})
 	
+	IF(CMAKE_BUILD_TYPE MATCHES Debug)
+	       SET(DEBUG_TOKEN "d")
+    	ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
+	SET(file_name ${CMAKE_SHARED_LIBRARY_PREFIX}${plugin}${DEBUG_TOKEN}${CMAKE_SHARED_LIBRARY_SUFFIX})
 	SET(${qualified_plugin_name} OFF CACHE BOOL "Build latest version of ${qualified_plugin_name}")
 	
 	MESSAGE(STATUS "Build latest version of ${qualified_plugin_name}")
@@ -233,7 +237,7 @@ SUBDIRLIST(SUBDIRS ${CMAKE_SOURCE_DIR}/plugins)
 		string(REPLACE "-" "_" tmp_plugin_name ${plugin})
 		string(REPLACE "_plugin" "" tmp_plugin_name ${tmp_plugin_name})
 
-		#MESSAGE(STATUS "Converted Plugin Name::: ${tmp_plugin_name}")
+		MESSAGE(STATUS "Converted Plugin Name::: ${file_name}")
 
 		#which definition correspond to our plugin?
 		FILE(GLOB PROTOCOL_DEFINITION_INPUT_FILES RELATIVE "${PROTOCOL_DEFINITION_SOURCE_DIR}"   "${PROTOCOL_DEFINITION_SOURCE_DIR}/target_agent_prot_${tmp_plugin_name}*.proto")			
@@ -304,7 +308,6 @@ SUBDIRLIST(SUBDIRS ${CMAKE_SOURCE_DIR}/plugins)
     endif()
 ENDFOREACH()
 
-      MESSAGE(STATUS "THE PLUGIN XML:: ${PLUGIN_LIST}")
 set(PLUGINS_TO_LOAD ${PLUGIN_LIST} PARENT_SCOPE)
 
 endfunction(load_plugins)

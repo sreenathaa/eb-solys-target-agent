@@ -12,7 +12,7 @@ PROJECT ( DltMonitorPlugin )
 #AMD64	     x		|	x	|	x	|
 set(dlt_monitor_platformSupportMatrix  "0 0 1|0 0 1|0 0 1|0 0 0|0 0 0|0 0 0" PARENT_SCOPE)
 
-set(dlt_monitor_Capabilities "\t\t<${plugin}>\n\t\t\t<Path\ attr=\"./plugins/${LINUX_LIB_PREFIX}${plugin}${DEBUG_SUFFIX}${LIBRARY_EXTENSION}\"/>
+set(dlt_monitor_Capabilities "\t\t<${plugin}>\n\t\t\t<Path\ attr=\"./plugins/${file_name}\"/>
         \n\t\t\t<!-- Set filter based on Application ID (MOST) and Context ID (IN) -->
 		\n\t\t\t<!-- Add your config Item here: <dltFilter attr=\"MOST IN\"/> -->
 		\n\t\t\t<!-- Set filter based only on Application ID (NAVI) all contexts associated with the Application ID will be selected-> -->
@@ -65,24 +65,24 @@ ADD_LIBRARY (dlt-monitor-plugin SHARED ${DLT_MONITOR_PLUGIN_SRC} ${DLT_GEN_FILES
 TARGET_LINK_LIBRARIES(dlt-monitor-plugin ${PROTO_BUF_LIB} ${POCO_LIB_FOUNDATION} ${POCO_LIB_UTIL} ${POCO_LIB_XML} ${POCO_LIB_NET} ${DLT_LIBRARIES} pthread)	
 
 
-INSTALL(FILES ${CMAKE_BINARY_DIR}/bin/${BUILD_FOLDER_NAME}/${LINUX_LIB_PREFIX}dlt-monitor-plugin${DEBUG_SUFFIX}${LIBRARY_EXTENSION} DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins/)
+INSTALL(TARGETS dlt-monitor-plugin LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins/)
 
 IF(${TA_ENABLE_TESTING})
   INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIR} ${GMOCK_INCLUDE_DIR})
   
   SET(DLT_MONITOR_PLUGIN_TEST_LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test/dlt_monitor_plugin_test.cpp)
 
-  ADD_EXECUTABLE(dlt-monitor-plugin${DEBUG_SUFFIX}-test ${DLT_MONITOR_PLUGIN_TEST_LIB_SRC} )
+  ADD_EXECUTABLE(dlt-monitor-plugin-test ${DLT_MONITOR_PLUGIN_TEST_LIB_SRC} )
 
   TARGET_LINK_LIBRARIES(
-	  dlt-monitor-plugin${DEBUG_SUFFIX}-test
-	  dlt-monitor-plugin${DEBUG_SUFFIX}
+	  dlt-monitor-plugin-test
+	  dlt-monitor-plugin
 	  ${GMOCK_LIB}
 	  ${GTEST_LIB}
 	  pthread )
   
   add_test(
-    NAME dlt-monitor-plugin${DEBUG_SUFFIX}-test
-    COMMAND dlt-monitor-plugin${DEBUG_SUFFIX}-test
+    NAME dlt-monitor-plugin-test
+    COMMAND dlt-monitor-plugin-test
   )
 ENDIF()

@@ -12,7 +12,7 @@ PROJECT ( SocketReaderPlugin )
 #AMD64	     x		|	x	|	x	|
 set(socket_reader_platformSupportMatrix  "1 0 1|0 0 1|0 0 1|0 0 0|0 0 0|0 1 0" PARENT_SCOPE)
 
-set(socket_reader_Capabilities "\t\t<${plugin}>\n\t\t\t<Path attr=\"./plugins/${LINUX_LIB_PREFIX}${plugin}${DEBUG_SUFFIX}${LIBRARY_EXTENSION}\"/>
+set(socket_reader_Capabilities "\t\t<${plugin}>\n\t\t\t<Path attr=\"./plugins/${file_name}\"/>
 		\n\t\t\t<!-- Add your config Item here: <portNumber attr=\"1111\"/> -->
 		\n\t\t\t<!-- Add your config Item here: <ConfigItem1 attr=\"value1\"/> -->
 		\n\t\t\t<!-- Add your config Item here: <ConfigItem1 attr=\"value1\"/> -->
@@ -48,26 +48,26 @@ ADD_LIBRARY (socket-reader-plugin SHARED ${SOCKET_READER_PLUGIN_SRC}  ${PROTO_GL
 
 TARGET_LINK_LIBRARIES(socket-reader-plugin ${PROTO_BUF_LIB} ${POCO_LIB_FOUNDATION} ${POCO_LIB_UTIL} ${POCO_LIB_XML} ${POCO_LIB_NET})	
 
-INSTALL(FILES ${CMAKE_BINARY_DIR}/bin/${BUILD_FOLDER_NAME}/${LINUX_LIB_PREFIX}socket-reader-plugin${DEBUG_SUFFIX}${LIBRARY_EXTENSION} DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins/)
+INSTALL(TARGETS socket-reader-plugin LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins/)
 
 IF(${TA_ENABLE_TESTING})
   INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIR} ${GMOCK_INCLUDE_DIR})
   
   SET(SOCKET_READER_TEST_LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test/socket_reader_plugin_test.cpp)
 
-  ADD_EXECUTABLE(socket-reader-plugin${DEBUG_SUFFIX}-test ${SOCKET_READER_TEST_LIB_SRC})
+  ADD_EXECUTABLE(socket-reader-plugin-test ${SOCKET_READER_TEST_LIB_SRC})
 
   TARGET_LINK_LIBRARIES(
-	  socket-reader-plugin${DEBUG_SUFFIX}-test
+	  socket-reader-plugin-test
 	  ${PROTO_BUF_LIB}
 	  ${POCO_LIB_FOUNDATION}
-	  socket-reader-plugin${DEBUG_SUFFIX}
+	  socket-reader-plugin
 	  ${GMOCK_LIB}
 	  ${GTEST_LIB}
 	  )
   
   add_test(
-    NAME socket-reader-plugin${DEBUG_SUFFIX}-test
-    COMMAND socket-reader-plugin${DEBUG_SUFFIX}-test
+    NAME socket-reader-plugin-test
+    COMMAND socket-reader-plugin-test
   )
 ENDIF()
