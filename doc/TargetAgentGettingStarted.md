@@ -3,9 +3,9 @@
 ## Content
 
 	1. Dependencies
-	2. Native Compilation
+	2. Compile
 	3. Usage
-	4. Cross Compilation
+	4. Cross Compile
 	5. Target Agent and plug-in configuration
 
 ##  1. Dependencies
@@ -37,13 +37,15 @@ For example
 		D-Bus Message Bus Daemon
 		Version  1.6.12
 
-##  2.	Native Compilation
+##  2.	Compile
 
 	mkdir build
 	cd build
-	cmake ../ -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release" -DCMAKE_INSTALL_PREFIX=$PATH_TO_INSTALL
+	cmake ../ -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release"
 	make all
-	make install
+	sudo make install
+
+	The default install folder may overwritten by setting the CMAKE_INSTALL_PREFIX variable.
 
 ## 3. Usage
 
@@ -55,19 +57,17 @@ Start the target agent by calling following command:
 
 Start the target agent with the --help parameter for information related to the accepted parameters and format
 
-##  4. Cross Compilation
+##  4. Cross Compile
 
-	export PATH_TO_SOURCES="repository root"
-	export PATH_TO_INSTALL=$PATH_TO_SOURCES/../install
-	mkdir $PATH_TO_INSTALL
-	mkdir $PATH_TO_SOURCES/../build
-	cd $PATH_TO_SOURCES/../build
-	export TOOLCHAIN="path to cmake toolchain"
-
-	cmake $PATH_TO_SOURCES -DTA_PLUGIN_dbus-monitor-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release" -DCMAKE_INSTALL_PREFIX=$PATH_TO_INSTALL -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN
-
+	mkdir build
+	cd build
+	cmake ../ -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release"
+	-DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN
 	make all
-	make install
+	sudo make install
+
+	The default install folder may overwritten by setting the CMAKE_INSTALL_PREFIX variable.
+	In the command above, the TOOLCHAIN variable must contain the absolute path of the cmake toolchain file.
 
 ## 5. Target Agent and plug-in configuration
 
