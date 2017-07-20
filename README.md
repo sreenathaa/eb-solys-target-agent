@@ -1,5 +1,7 @@
 ﻿# EB solys Target Agent
 
+[![Build Status](https://travis-ci.org/basmatix/eb-solys-target-agent.svg?branch=master)](https://travis-ci.org/basmatix/eb-solys-target-agent)
+
 ## Overview
 
 The EB solys Target Agent collects data from target device(s) for live or offline analysis with EB solys.
