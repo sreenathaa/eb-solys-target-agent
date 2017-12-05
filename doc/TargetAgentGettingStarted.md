@@ -46,6 +46,8 @@ For example
 	sudo make install
 
 	The default install folder may overwritten by setting the CMAKE_INSTALL_PREFIX variable.
+	
+**If you don't have d-bus or DLT available on your system, deactivate the respective CMake build flags**
 
 ## 3. Usage
 
