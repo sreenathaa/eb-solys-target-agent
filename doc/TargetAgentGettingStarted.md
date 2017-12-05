@@ -41,7 +41,7 @@ For example
 
 	mkdir build
 	cd build
-	cmake ../ -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release"
+	cmake ../eb-solys-target-agent -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release"
 	make all
 	sudo make install
 
