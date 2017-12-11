@@ -1,10 +1,11 @@
 
 SET (CMAKE_VERBOSE_MAKEFILE off)
 
-cmake_minimum_required(VERSION 2.8)
-INCLUDE_DIRECTORIES (${POCO_INCLUDE_DIR})
+cmake_minimum_required(VERSION 2.8.5)
 SET (PLUGIN_PROVIDER_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 SET (PLUGIN_PROVIDER_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/inc)
+
+find_package(Poco REQUIRED Foundation Util Net XML JSON)
 
 # Source files
 SET (PLUGIN_PROVIDER_LIB_SRC 	${PLUGIN_PROVIDER_SOURCE_PATH}/plugin_provider.cpp
@@ -13,7 +14,14 @@ SET (PLUGIN_PROVIDER_LIB_SRC 	${PLUGIN_PROVIDER_SOURCE_PATH}/plugin_provider.cpp
 				
 ADD_LIBRARY(plugin-provider STATIC ${PLUGIN_PROVIDER_LIB_SRC} ${PLUGIN_PROVIDER_LIB_INC})
 
-TARGET_LINK_LIBRARIES(plugin-provider ${PROTO_BUF_LIB} ${POCO_LIB_NET} ${POCO_LIB_UTIL}  ${POCO_LIB_XML}  ${POCO_LIB_FOUNDATION} ${POCO_LIB_JASON}  ${POCO_LIB_UTIL}  )
+TARGET_LINK_LIBRARIES(plugin-provider 
+    ${PROTO_BUF_LIB} 
+    Poco::Foundation
+    Poco::Util
+    Poco::Net
+    Poco::XML
+    Poco::JSON
+    )
 
 
 target_include_directories(plugin-provider
@@ -43,7 +51,6 @@ IF(${TA_LOCAL_ENABLE_TESTING_DISABLED})
 	INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/inc
 						 ${CMAKE_CURRENT_SOURCE_DIR}/../logger/test/
 						 ${CMAKE_CURRENT_SOURCE_DIR}/../target-agent-runtime/gen
-						 ${POCO_INCLUDE_DIR}
 						 )
 	SET (TIMESTAMP_PROVIDER_TEST_LIB_SRC	${CMAKE_CURRENT_SOURCE_DIR}/test/CTimestampProviderTests.cpp
 										    ${CMAKE_CURRENT_SOURCE_DIR}/src/CTimestampProvider.cpp
@@ -52,8 +59,16 @@ IF(${TA_LOCAL_ENABLE_TESTING_DISABLED})
 
 	ADD_EXECUTABLE(timestamp_provider-test ${TIMESTAMP_PROVIDER_TEST_LIB_SRC})
 	
-	TARGET_LINK_LIBRARIES(timestamp_provider-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB} ${POCO_LIB_FOUNDATION} ${ADDITIONAL_LIBRARY}  ${POCO_LIB_NET} 
-															)
+	TARGET_LINK_LIBRARIES(timestamp_provider-test ${GTEST_MAIN_LIB} 
+            ${GTEST_LIB} 
+            ${GMOCK_LIB}
+            ${ADDITIONAL_LIBRARY} 														
+            Poco::Foundation
+            Poco::Util
+            Poco::Net
+            Poco::XML
+            Poco::JSON
+            )
 
 	add_test(
 		NAME timestamp_provider-test
@@ -68,8 +83,13 @@ IF(${TA_LOCAL_ENABLE_TESTING_DISABLED})
 
 	ADD_EXECUTABLE(protocol_message${DEBUG_SUFFIX}-test ${PROTOCOL_MSG_TEST_LIB_SRC})
 	
-	TARGET_LINK_LIBRARIES(protocol_message${DEBUG_SUFFIX}-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB} ${POCO_LIB_FOUNDATION}  ${POCO_LIB_NET} 
-															)
+	TARGET_LINK_LIBRARIES(protocol_message${DEBUG_SUFFIX}-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB}		
+            Poco::Foundation
+            Poco::Util
+            Poco::Net
+            Poco::XML
+            Poco::JSON
+            )
 
 	add_test(
 		NAME protocol_message${DEBUG_SUFFIX}-test

@@ -1,41 +1,15 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.5)
 
 PROJECT ( solys-agent )
 
 string(TIMESTAMP TS "%Y-%m-%d %H:%M:%S")
 SET(TA_VERSION_INFO "Developer build from ${TS}" CACHE STRING "Target Agent Version related information")
 
-set (git_op "clone")
-set (git_show_progress "--progress")
-set (poco_repository "https://github.com/emma3826/poco.git")
-execute_process(COMMAND git ${git_op} ${poco_repository}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty
-  RESULT_VARIABLE result
-)
-set (git_op "checkout")
-set (git_branch "poco-1.6.1")
-message(STATUS "git cmd result: ${result}")
-execute_process(COMMAND git ${git_op} ${git_branch}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty/poco
-  RESULT_VARIABLE result
-)
-message(STATUS "git cmd result: ${result}")
-set (git_op "clone")
-set (protobuf_repository "https://github.com/emma3826/protobuf.git")
-execute_process(COMMAND git ${git_op} ${protobuf_repository}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty
-  RESULT_VARIABLE result
-)
-set (git_op "checkout")
-set (protobuf_repository "cmake_integration")
-execute_process(COMMAND git ${git_op} ${protobuf_repository}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty/protobuf
-  RESULT_VARIABLE result
-)
 ### include
 include(ExternalProject)
 include(utils/PlatformAbstractionCMakeLists.txt)
 #set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/deploy CACHE STRINGS "cmake install path")
+
 macro(force_static_build)
   if(MSVC)
     set(MSVC_RUNTIME "static")
@@ -69,87 +43,7 @@ else(WIN32)
     set (PROTO_EXE_SUFFIX "")    
 endif(WIN32)
 
-set (PROTO_PATH_TO_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty/protobuf/bin/)
-set (PROTO_COMMAND ${PROTO_PATH_TO_GENERATOR}/protoc${PROTO_EXE_SUFFIX})
-option (PROTO_REMOVE_GEN_FILES "remove all generated files before build" OFF) 
-option (PROTO_BUILD_SKIP "skip protobuf build once built" OFF)
 
-
-if (NOT WIN32)
-
-    set (PROTO_BUILD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty/protobuf/ CACHE STRING
-      "given path to build directory" FORCE)
-    
-    option (PROTO_CLEAN_BUILD_DIRECTORIES "clean all build directory for new build" OFF)
-         
-    set (PROTO_BUILD_DIR  protoBuild )
-
-    set(PROTO_LIB_NAME  "protobuf" CACHE STRING "BaseName chosen by ")
-    set_property(CACHE PROTO_LIB_NAME PROPERTY STRINGS protobuf libprotobuf)
-
-    set (PROTO_INSTALL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty/protobuf/ CACHE STRING
-      "given path to install directory" FORCE)
-   
-    set (PROTO_BUILD_OPTION  "--prefix=${PROTO_INSTALL_PATH}" CACHE STRING "given options to build protoBuf")
-    
-    separate_arguments(PROTO_BUILD_OPTION)
-    
-    foreach(element ${PROTO_BUILD_OPTION})
-      list(APPEND tmp ${element})
-    endforeach(element ${PROTO_BUILD_OPTION})
-
-    set (PROTO_BUILD_OPTION  ${tmp})
-
-    if (${PROTO_CLEAN_BUILD_DIRECTORIES})
-        file (GLOB_RECURSE remove_file "${PROTO_BUILD_PATH}${PROTO_BUILD_DIR}/*")
-        list(LENGTH remove_file RES_LEN)
-        if(NOT ${RES_LEN} EQUAL "0")
-                file (REMOVE ${remove_file})
-        endif()
-        
-        file (GLOB_RECURSE remove_file "${PROTO_INSTALL_PATH}/*")
-        list(LENGTH remove_file RES_LEN)
-        if(NOT ${RES_LEN} EQUAL "0")
-                file (REMOVE ${remove_file})
-        endif()
-    endif()
-    
-    set (PROTO_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/target-agent/extern/3rdparty/protobuf/lib/scratchBuild/include)
-    option (PROTO_CLEAN_BUILD_DIRECTORIES "clean all build directory for new build" OFF)
-
-endif(NOT WIN32)
-
-
-add_subdirectory(${CMAKE_SOURCE_DIR}/target-agent/extern)
-
-##POCO retrieving the properties for the above mentioned modules
-GET_PROPERTY(POCO_LIB_PATH GLOBAL PROPERTY POCO_LIB_PATH)
-GET_PROPERTY(POCO_BIN_PATH GLOBAL PROPERTY POCO_BIN_PATH)
-GET_PROPERTY(POCO_INCLUDE_DIR GLOBAL PROPERTY POCO_INCLUDE_DIR)
-GET_PROPERTY(POCO_LIB_FOUNDATION GLOBAL PROPERTY POCO_LIB_FOUNDATION)
-GET_PROPERTY(POCO_LIB_CRYPTO GLOBAL PROPERTY POCO_LIB_CRYPTO)
-GET_PROPERTY(POCO_LIB_UTIL GLOBAL PROPERTY POCO_LIB_UTIL)
-GET_PROPERTY(POCO_LIB_NET GLOBAL PROPERTY POCO_LIB_NET)
-GET_PROPERTY(POCO_LIB_XML GLOBAL PROPERTY POCO_LIB_XML)
-GET_PROPERTY(POCO_LIB_JASON GLOBAL PROPERTY POCO_LIB_JASON)
-GET_PROPERTY(POCO_SHARED_LIB_VERSION GLOBAL PROPERTY POCO_SHARED_LIB_VERSION)
-SET(POCO_LIBS_NAME "${POCO_LIB_UTIL} ${POCO_LIB_NET}  ${POCO_LIB_XML}  ${POCO_LIB_FOUNDATION} ${POCO_LIB_JASON}  ${POCO_LIB_UTIL}")
-
-#get_target_property(inclu ${POCO_LIB_NET} INCLUDE_DIRECTORIES)
-
-##PROTOBUF retrieving the properties for the above mentioned modules
-GET_PROPERTY(PROTO_BUF_INCLUDE_DIR GLOBAL PROPERTY PROTO_BUF_INCLUDE_DIR)
-GET_PROPERTY(PROTO_BUF_LIB_PATH GLOBAL PROPERTY PROTO_BUF_LIB_PATH)
-GET_PROPERTY(PROTO_BUF_LIB GLOBAL PROPERTY PROTO_BUF_LIB)
-GET_PROPERTY(PROTO_BUF_SHARED_LIB_VERSION GLOBAL PROPERTY PROTO_BUF_SHARED_LIB_VERSION)
-
-
-#gTest
-GET_PROPERTY(GTEST_INCLUDE_DIR GLOBAL PROPERTY GTEST_INCLUDE_DIR)
-GET_PROPERTY(GTEST_LIB GLOBAL PROPERTY GTEST_LIB)
-#gMock
-GET_PROPERTY(GMOCK_INCLUDE_DIR GLOBAL PROPERTY GMOCK_INCLUDE_DIR)
-GET_PROPERTY(GMOCK_LIB GLOBAL PROPERTY GMOCK_LIB)
 
 file (STRINGS "${CMAKE_SOURCE_DIR}/protocol-definitions/version" BUILD_NUMBER)
 
@@ -263,7 +157,7 @@ SUBDIRLIST(SUBDIRS ${CMAKE_SOURCE_DIR}/plugins)
 
 		
 		execute_process(
-		    COMMAND ${PROTO_COMMAND} --include_imports --proto_path=${PROTOCOL_DEFINITION_SOURCE_DIR} --cpp_out=${PROTOBUF_GEN_OUTPUT_DIR} ${PROTOCOL_DEFINITION_SOURCE_DIR}/${PROTOCOL_DEFINITION_INPUT_FILES}
+                    COMMAND ${Protobuf_PROTOC_EXECUTABLE} --include_imports --proto_path=${PROTOCOL_DEFINITION_SOURCE_DIR} --cpp_out=${PROTOBUF_GEN_OUTPUT_DIR} ${PROTOCOL_DEFINITION_SOURCE_DIR}/${PROTOCOL_DEFINITION_INPUT_FILES}
 		    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 		)
 		

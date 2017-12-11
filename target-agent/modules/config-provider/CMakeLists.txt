@@ -1,6 +1,7 @@
 SET (CMAKE_VERBOSE_MAKEFILE off)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.5)
+
 
 SET (CONFIG_PROVIDER_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 SET (CONFIG_PROVIDER_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/inc)
@@ -8,13 +9,17 @@ SET (CONFIG_PROVIDER_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 SET (CONFIG_PROVIDER_LIB_SRC 	${CONFIG_PROVIDER_SOURCE_PATH}/config_provider.cpp)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+find_package(Poco REQUIRED Foundation Util)
+
+
 ADD_LIBRARY(config-provider STATIC ${CONFIG_PROVIDER_LIB_SRC} ${CONFIG_PROVIDER_LIB_INC})
-TARGET_LINK_LIBRARIES(config-provider ${PROTO_BUF_LIB} ${POCO_LIB_FOUNDATION} ${POCO_LIB_UTIL})
+TARGET_LINK_LIBRARIES(config-provider ${PROTOBUF_LIBRARY}  Poco::Foundation Poco::Util)
 
 target_include_directories(config-provider
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc
-						  ${POCO_INCLUDE_DIR}
 						  ${CONFIG_PROVIDER_INCLUDE_PATH}
 		 >
         $<INSTALL_INTERFACE:inc>

@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.5)
 
 # Source files
 SET (MESSAGE_RECORDER_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -15,8 +15,21 @@ SET (MESSAGE_RECORDER_LIB_SRC 	${MESSAGE_RECORDER_SOURCE_PATH}/MessageRecorder.c
 SET (MESSAGE_RECORDER_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 SET (MESSAGE_RECORDER_LIB_INC	${MESSAGE_RECORDER_INCLUDE_PATH}/MessageRecorder.hpp)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+find_package(Poco REQUIRED Foundation Util Net XML JSON)
+
+
+
 ADD_LIBRARY(message-recorder STATIC ${MESSAGE_RECORDER_LIB_SRC} ${MESSAGE_RECORDER_LIB_INC})
-TARGET_LINK_LIBRARIES(message-recorder ${PROTO_BUF_LIB} ${POCO_LIB_NET} ${POCO_LIB_UTIL}  ${POCO_LIB_XML}  ${POCO_LIB_FOUNDATION} ${POCO_LIB_JASON}  ${POCO_LIB_UTIL})
+TARGET_LINK_LIBRARIES(message-recorder 
+    ${PROTOBUF_LIBRARY} 
+    Poco::Foundation
+    Poco::Util
+    Poco::Net
+    Poco::XML
+    Poco::JSON
+    ) 
 
 target_include_directories(message-recorder
     PUBLIC
@@ -24,7 +37,6 @@ target_include_directories(message-recorder
 					${CMAKE_CURRENT_SOURCE_DIR}/inc 
 					${CMAKE_CURRENT_SOURCE_DIR}/../target-agent-runtime/inc
 					${CMAKE_CURRENT_SOURCE_DIR}/../target-agent-runtime/gen
-					${POCO_INCLUDE_DIR}
 		>
         $<INSTALL_INTERFACE:inc>
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -52,7 +64,7 @@ IF(${TA_LOCAL_ENABLE_TESTING})
 
 	ADD_EXECUTABLE(serializer-test ${SERIALIZER_TEST_LIB_SRC})
 	
-	TARGET_LINK_LIBRARIES(serializer-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB} ${POCO_LIB_FOUNDATION} ${ADDITIONAL_LIBRARY} ${POCO_LIB_NET} ${PROTO_BUF_LIB}
+        TARGET_LINK_LIBRARIES(serializer-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB} ${POCO_LIB_FOUNDATION} ${ADDITIONAL_LIBRARY} ${POCO_LIB_NET} ${PROTOBUF_LIBRARY}
 															plugin-provider communicator)
 
 	add_test(
@@ -70,7 +82,7 @@ IF(${TA_LOCAL_ENABLE_TESTING})
 
 	ADD_EXECUTABLE(pathGenerator-test ${PATHHANDLER_TEST_LIB_SRC})
 	
-	TARGET_LINK_LIBRARIES(pathGenerator-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB} ${POCO_LIB_FOUNDATION} ${ADDITIONAL_LIBRARY} ${POCO_LIB_NET} ${PROTO_BUF_LIB}
+        TARGET_LINK_LIBRARIES(pathGenerator-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB} ${POCO_LIB_FOUNDATION} ${ADDITIONAL_LIBRARY} ${POCO_LIB_NET} ${PROTO_BUF_LIBRARY}
 															plugin-provider communicator)
 
 	add_test(

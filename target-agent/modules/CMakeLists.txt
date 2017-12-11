@@ -14,15 +14,20 @@ SET (MESSAGE_RECORDER_INCLUDE_DIR	${CMAKE_CURRENT_SOURCE_DIR}/message-recorder/i
 SET (MEDIATOR_INCLUDE_DIR	        ${CMAKE_CURRENT_SOURCE_DIR}/target-agent-runtime/inc)
 SET (LOGGER_INCLUDE_DIR         	${CMAKE_CURRENT_SOURCE_DIR}/logger/inc)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+find_package(Poco REQUIRED Foundation Util Net XML JSON)
+
+
 IF(NOT MSVC AND NOT ANDROID AND NOT ${CMAKE_SYSTEM_NAME} MATCHES "QNX")
     SET(ADDITIONAL_LIBRARY -lrt)
 	SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath,${ORIGIN}" )
 ENDIF()
 
 IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "QNX")
-	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}  -fPIE" )
+	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}  -fPIE -pthread" )
 	SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS}  -fPIE -pie" )		
-	SET( CMAKE_C_FLAGS  "${CMAKE_CXX_FLAGS}  -fPIE" )
+	SET( CMAKE_C_FLAGS  "${CMAKE_CXX_FLAGS}  -fPIE -pthread" )
 else(NOT ${CMAKE_SYSTEM_NAME} MATCHES "QNX")
 	SET( CMAKE_CXX_FLAGS  "-fpie" )
 	SET( CMAKE_EXE_LINKER_FLAGS  "-fpie" )		
@@ -38,7 +43,7 @@ if (MSVC)
 endif (MSVC)
 						
 INCLUDE_DIRECTORIES(
-						${PROTO_BUF_INCLUDE_DIR}
+						${PROTOBUF_INCLUDE_DIR}
 						${COMMUNICATOR_INCLUDE_DIR}
 						${PLUGIN_INTERFACE_INCLUDE_DIR}
 						${CONFIG_PROVIDER_INCLUDE_DIR}
@@ -70,14 +75,19 @@ ADD_SUBDIRECTORY(plugin-provider)
 SET (RACE_TARGET_AGENT_SRC target_agent_main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/target-agent-runtime/src/CMediator.cpp )
 ADD_EXECUTABLE(solys-agent ${RACE_TARGET_AGENT_SRC})
 
-TARGET_LINK_LIBRARIES(solys-agent	
-														communicator
-														config-provider
-														plugin-provider
-														message-recorder
-														logger
-														${PROTO_BUF_LIB}  ${POCO_LIB_NET} ${POCO_LIB_UTIL}  ${POCO_LIB_XML}  ${POCO_LIB_FOUNDATION} ${POCO_LIB_JASON}  ${POCO_LIB_UTIL}
-														)
+TARGET_LINK_LIBRARIES(solys-agent
+    communicator
+    config-provider
+    plugin-provider
+    message-recorder
+    logger
+    ${PROTOBUF_LIBRARY}
+    Poco::Foundation
+    Poco::Util
+    Poco::Net
+    Poco::XML
+    Poco::JSON
+)
 
 SET_TARGET_PROPERTIES(solys-agent PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 

@@ -2,7 +2,7 @@
 
 SET (CMAKE_VERBOSE_MAKEFILE off)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.5)
 
 SET (CLOGGER_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 SET (CLOGGER_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/inc)
@@ -13,9 +13,20 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 SET (CLOGGER_LIB_SRC 	${CLOGGER_SOURCE_PATH}/CLogger.cpp ${CLOGGER_SOURCE_PATH}/CConnector.cpp)
 SET (CLOGGER_LIB_INC	${CLOGGER_INCLUDE_PATH}/CLogger.hpp)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+find_package(Poco REQUIRED Foundation Util Net XML JSON)
+
+
 
 ADD_LIBRARY(logger STATIC ${CLOGGER_LIB_SRC})
-TARGET_LINK_LIBRARIES(logger  ${PROTO_BUF_LIB} ${POCO_LIB_NET} ${POCO_LIB_UTIL}  ${POCO_LIB_XML}  ${POCO_LIB_FOUNDATION} ${POCO_LIB_JASON}  ${POCO_LIB_UTIL})
+TARGET_LINK_LIBRARIES(logger  ${PROTOBUF_LIBRARY} 
+    Poco::Foundation
+    Poco::Util
+    Poco::Net
+    Poco::XML
+    Poco::JSON
+    )
 
 target_include_directories(logger
     PUBLIC
@@ -48,17 +59,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 	ADD_EXECUTABLE(logger-test ${LOGGER_TEST_LIB_SRC})
 	
 	TARGET_LINK_LIBRARIES(logger-test ${GTEST_MAIN_LIB}
-													 ${GTEST_LIB} ${GMOCK_LIB}		
-													 ${POCO_LIB_FOUNDATION} ${POCO_LIB_UTIL}
-													 ${POCO_LIB_NET} 
-															)
+            ${GTEST_LIB} ${GMOCK_LIB}		
+            Poco::Foundation
+            Poco::Util
+            Poco::Net
+            )
 
 	add_test(
-		NAME logger-test
-		COMMAND logger-test
-	)
-	
-	
+	    NAME logger-test
+	    COMMAND logger-test
+	    )
 
 	SET (CONNECTOR_TEST_LIB_SRC	${CMAKE_CURRENT_SOURCE_DIR}/test/connector_test.cpp
 									${CMAKE_CURRENT_SOURCE_DIR}/src/CConnector.cpp
@@ -66,11 +76,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 	ADD_EXECUTABLE(connector${DEBUG_SUFFIX}-test ${CONNECTOR_TEST_LIB_SRC})
 	
-	TARGET_LINK_LIBRARIES(connector${DEBUG_SUFFIX}-test ${GTEST_MAIN_LIB}
-													 ${GTEST_LIB} ${GMOCK_LIB}		
-													 ${POCO_LIB_FOUNDATION} ${POCO_LIB_UTIL}
-													 ${POCO_LIB_NET} 
-															)
+	TARGET_LINK_LIBRARIES(connector${DEBUG_SUFFIX}-test 
+            ${GTEST_MAIN_LIB}
+            ${GTEST_LIB} 
+            ${GMOCK_LIB}		
+            Poco::Foundation
+            Poco::Util
+            Poco::Net
+            )
 
 	add_test(
 		NAME connector${DEBUG_SUFFIX}-test

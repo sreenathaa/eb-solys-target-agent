@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.5)
 
 PROJECT ( ResourceMonitorPlugin )
 
@@ -48,13 +48,16 @@ SET (RESOURCE_MONITOR_PLUGIN_SRC
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/gen PROTO_GLUE_CODE)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+find_package(Poco REQUIRED Foundation Util Net XML JSON)
+
 ADD_LIBRARY (resource-monitor-plugin SHARED ${RESOURCE_MONITOR_PLUGIN_SRC} ${PROTO_GLUE_CODE})
 
  target_include_directories(resource-monitor-plugin 
     PUBLIC
         $<BUILD_INTERFACE:
-					.${POCO_INCLUDE_DIR} 
-		     ${PROTO_BUF_INCLUDE_DIR} 
+		     ${PROTOBUF_INCLUDE_DIR} 
 		     ${COMMON_PLUGIN_INTERFACE_INCLUDE_DIR}
 		     ${COMMON_PLUGIN_INTERFACE_GEN_DIR}
 		     inc
@@ -68,7 +71,10 @@ ADD_LIBRARY (resource-monitor-plugin SHARED ${RESOURCE_MONITOR_PLUGIN_SRC} ${PRO
 IF(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
   TARGET_LINK_LIBRARIES(resource-monitor-plugin ${PROTO_BUF_LIB} ${POCO_LIB_FOUNDATION})
 ELSE()
-  TARGET_LINK_LIBRARIES(resource-monitor-plugin ${PROTO_BUF_LIB} ${POCO_LIB_FOUNDATION} pthread)
+  TARGET_LINK_LIBRARIES(resource-monitor-plugin 
+      ${PROTOBUF_LIBRARY} 
+      Poco::Foundation
+      pthread)
 ENDIF()	
 
 INSTALL(FILES ${CMAKE_BINARY_DIR}/bin/${BUILD_FOLDER_NAME}/${LINUX_LIB_PREFIX}resource-monitor-plugin${DEBUG_SUFFIX}${LIBRARY_EXTENSION} DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins)
@@ -90,8 +96,7 @@ IF(${TA_LOCAL_ENABLE_TESTING})
  target_include_directories(resource-monitor-plugin${DEBUG_SUFFIX}-test
     PUBLIC
         $<BUILD_INTERFACE:
-			 ${POCO_INCLUDE_DIR} 
-		     ${PROTO_BUF_INCLUDE_DIR} 
+		     ${PROTOBUF_INCLUDE_DIR} 
 		     ${COMMON_PLUGIN_INTERFACE_INCLUDE_DIR}
 		     ${COMMON_PLUGIN_INTERFACE_GEN_DIR}
 		     inc
@@ -105,8 +110,8 @@ IF(${TA_LOCAL_ENABLE_TESTING})
     )
   TARGET_LINK_LIBRARIES(
 	  resource-monitor-plugin${DEBUG_SUFFIX}-test
-	  ${PROTO_BUF_LIB}
-	  ${POCO_LIB_FOUNDATION}
+          ${PROTOBUF_LIBRARY}
+          Poco::Foundation
 	  resource-monitor-plugin
 	  ${GMOCK_LIB}
 	  ${GTEST_LIB}

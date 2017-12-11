@@ -2,25 +2,27 @@
 
 SET (CMAKE_VERBOSE_MAKEFILE off)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.5)
 SET (COMMUNICATOR_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 SET (COMMUNICATOR_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(ENV{LD_LIBRARY_PATH} ${PROTO_PATH_TO_GENERATOR})
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+find_package(Poco REQUIRED Foundation Util Net XML JSON)
 
-INCLUDE_DIRECTORIES (${POCO_INCLUDE_DIR}
-					 ${COMMUNICATOR_INCLUDE_PATH}
-					 ${CMAKE_CURRENT_SOURCE_DIR}/gen
-					 ${CMAKE_CURRENT_SOURCE_DIR}/../target-agent-runtime/gen
-					 )
+INCLUDE_DIRECTORIES (${COMMUNICATOR_INCLUDE_PATH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/gen
+    ${CMAKE_CURRENT_SOURCE_DIR}/../target-agent-runtime/gen
+)
 
 # Source files
 SET (COMMUNICATOR_LIB_SRC ${COMMUNICATOR_SOURCE_PATH}/CComController.cpp
-						  ${COMMUNICATOR_SOURCE_PATH}/CComServer.cpp
-						  ${COMMUNICATOR_SOURCE_PATH}/CMessageDispatcher.cpp	   
-						  ${COMMUNICATOR_SOURCE_PATH}/CommandControlServer.cpp
-						  )
+    ${COMMUNICATOR_SOURCE_PATH}/CComServer.cpp
+    ${COMMUNICATOR_SOURCE_PATH}/CMessageDispatcher.cpp	   
+    ${COMMUNICATOR_SOURCE_PATH}/CommandControlServer.cpp
+)
 
 # protobuf-related actions
 SET (PROTOCOL_DEFINITION_SOURCE_DIR 	${PROJECT_SOURCE_DIR}/../../protocol-definitions)
@@ -53,7 +55,7 @@ foreach(PROTO_FILE ${PROTOCOL_DEFINITION_INPUT_FILES})
 endforeach(PROTO_FILE ${PROTOCOL_DEFINITION_INPUT_FILES})
 
 execute_process(
-	COMMAND ${PROTO_COMMAND} --proto_path=${PROTOCOL_DEFINITION_SOURCE_DIR} --cpp_out=${PROTOBUF_GEN_OUTPUT_DIR} ${PROTOCOL_DEFINITION_INPUT_FILES}
+        COMMAND ${Protobuf_PROTOC_EXECUTABLE} --proto_path=${PROTOCOL_DEFINITION_SOURCE_DIR} --cpp_out=${PROTOBUF_GEN_OUTPUT_DIR} ${PROTOCOL_DEFINITION_INPUT_FILES}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
@@ -64,7 +66,16 @@ SET(COMMON_DEST_DIR ${PROJECT_SOURCE_DIR}/plugin-interface/gen/)
 file(COPY ${COMMON_SOURCE_DIR} DESTINATION ${COMMON_DEST_DIR})
 
 ADD_LIBRARY(communicator STATIC ${COMMUNICATOR_LIB_SRC} ${COMMUNICATOR_LIB_INC} ${PROTO_GEN_SOURCE_FILES} ${PROTO_GEN_HEADER_FILES})
-TARGET_LINK_LIBRARIES(communicator logger ${PROTO_BUF_LIB} ${POCO_LIB_NET} ${POCO_LIB_UTIL}  ${POCO_LIB_XML}  ${POCO_LIB_FOUNDATION} ${POCO_LIB_JASON}  ${POCO_LIB_UTIL} ${ADDITIONAL_LIBRARY})
+TARGET_LINK_LIBRARIES(communicator 
+    logger 
+    ${PROTOBUF_LIBRARY} 
+    Poco::Foundation
+    Poco::Util
+    Poco::Net
+    Poco::XML
+    Poco::JSON
+    ${ADDITIONAL_LIBRARY}
+)
 
 IF(${TA_LOCAL_ENABLE_TESTING})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -81,8 +92,18 @@ IF(${TA_LOCAL_ENABLE_TESTING})
 
 	ADD_EXECUTABLE(command-control-server-test ${COMMAND_CONTROL_SERVER_SRC})
 	
-	TARGET_LINK_LIBRARIES(command-control-server-test ${GTEST_MAIN_LIB} ${GTEST_LIB} ${GMOCK_LIB} ${POCO_LIB_FOUNDATION} ${ADDITIONAL_LIBRARY} ${POCO_LIB_NET} ${PROTO_BUF_LIB}
-	 ${POCO_LIB_UTIL} )
+	TARGET_LINK_LIBRARIES(command-control-server-test 
+            ${GTEST_MAIN_LIB} 
+            ${GTEST_LIB} 
+            ${GMOCK_LIB}  
+            ${ADDITIONAL_LIBRARY} 
+            ${PROTO_BUF_LIB}
+            Poco::Foundation
+            Poco::Util
+            Poco::Net
+            Poco::XML
+            Poco::JSON
+            )
 
 	add_test(
 		NAME command-control-server-test
