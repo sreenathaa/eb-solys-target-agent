@@ -24,7 +24,7 @@ namespace Configuration {
 using Poco::Util::AbstractConfiguration;
 
 ConfigProvider::ConfigProvider() :
-        streamingPort(1234), cmdCtrlPort(1235),pluginList(), logLevel(""), logChannels(), recorderOn(
+        streamingPort(51789), cmdCtrlPort(1235),pluginList(), logLevel(""), logChannels(), recorderOn(
             false),fileSizeLimit(0),createOutputPath(false),recorderFilePrefix(""),targetDirPath(""),configurationFileName("conf.xml"), timeReference(
         eTimeRefUpTime) {
 }

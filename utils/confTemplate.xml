@@ -1,7 +1,7 @@
 <config>
 	<Network>
 		<!--Port Number For Client Connection -->
-		<Port>1234</Port>
+		<Port>51789</Port>
 		<!--Port Number For Command and Control -->
 		<CmdCtrlPort>1235</CmdCtrlPort>
 	</Network>
