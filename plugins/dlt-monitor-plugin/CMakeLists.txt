@@ -28,22 +28,60 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -O0 -Wall -fprofile-arcs -ftest-coverage")
   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
 ENDIF()
-INCLUDE(FindPkgConfig)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+find_package(Poco REQUIRED Foundation Util Net XML JSON)
+
+INCLUDE(FindPkgConfig)
 pkg_check_modules(DLT REQUIRED automotive-dlt)
 		    
-		    
+# protobuf-related actions
+SET (PROTOCOL_DEFINITION_SOURCE_DIR 	${PROJECT_SOURCE_DIR}/../../protocol-definitions)
+SET (PROTOCOL_DEFINITION_INPUT_FILES 	${PROTOCOL_DEFINITION_SOURCE_DIR}/target_agent_prot_most_spy.proto)				    
+
+SET (PROTOBUF_GEN_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gen)
+
+if (${PROTO_REMOVE_GEN_FILES})
+    file (GLOB remove_file "${CMAKE_CURRENT_SOURCE_DIR}/gen/*.*")
+    list(LENGTH remove_file RES_LEN)
+        if(NOT ${RES_LEN} EQUAL "0")
+                file (REMOVE ${remove_file})
+        endif()
+endif()
+
+foreach(PROTO_FILE ${PROTOCOL_DEFINITION_INPUT_FILES})
+	#get the name of the file without extension
+	get_filename_component(PROTO_NAME ${PROTO_FILE} NAME_WE)
+
+	#add the generated files
+	set (PROTO_GEN_SOURCE_FILES ${PROTO_GEN_SOURCE_FILES}
+	${PROTOBUF_GEN_OUTPUT_DIR}/${PROTO_NAME}.pb.cc)
+
+	set (PROTO_GEN_HEADER_FILES ${PROTO_GEN_HEADER_FILES}
+	${PROTOBUF_GEN_OUTPUT_DIR}/${PROTO_NAME}.pb.h)
+	
+
+endforeach(PROTO_FILE ${PROTOCOL_DEFINITION_INPUT_FILES})
+
+execute_process(
+        COMMAND ${Protobuf_PROTOC_EXECUTABLE} --proto_path=${PROTOCOL_DEFINITION_SOURCE_DIR} --cpp_out=${PROTOBUF_GEN_OUTPUT_DIR} ${PROTOCOL_DEFINITION_INPUT_FILES}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+
+
 MESSAGE( STATUS "DLT_INCLUDE_DIRS:         " ${DLT_INCLUDE_DIRS} )
 MESSAGE( STATUS "DLT_LIBRARIES:         " ${DLT_LIBRARIES} )
-INCLUDE_DIRECTORIES (
-  ${DLT_INCLUDE_DIRS}
-		    ${DLT_LIBRARIES} 
-${POCO_INCLUDE_DIR} 
-		     ${PROTO_BUF_INCLUDE_DIR} 
-		     ${COMMON_PLUGIN_INTERFACE_INCLUDE_DIR}
-		     ${COMMON_PLUGIN_INTERFACE_GEN_DIR}
-		     inc
-		     gen)
+INCLUDE_DIRECTORIES ( 
+    ${DLT_INCLUDE_DIRS}
+    ${DLT_LIBRARIES} 
+    #    ${POCO_INCLUDE_DIR} 
+    ${PROTOBUF_INCLUDE_DIR} 
+    ${COMMON_PLUGIN_INTERFACE_INCLUDE_DIR}
+    ${COMMON_PLUGIN_INTERFACE_GEN_DIR}
+    inc
+    gen)
 			 
 LINK_DIRECTORIES  (${POCO_LIB_PATH} ${PROTO_BUF_LIB_PATH} ${COMMON_PLUGIN_INTERFACE_LIB_PATH})
 
@@ -51,18 +89,20 @@ SET (DLT_MONITOR_PLUGIN_SRC src/dlt-monitor-plugin.cpp
 src/dlt-client-activity.cpp
 )
 
-SET(DLT_GEN_FILES 
-gen/target_agent_prot_dlt_monitor_plugin.pb.cc
-gen/target_agent_prot_most_spy.pb.cc
-)
 
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/gen PROTO_GLUE_CODE)
 
-SET (PROTOBUF_GEN_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gen)
-FILE(GLOB PROTO_GEN_SOURCE_FILES RELATIVE "${PROTOBUF_GEN_OUTPUT_DIR}"   "${PROTOBUF_GEN_OUTPUT_DIR}/*.cc")
+ADD_LIBRARY (dlt-monitor-plugin SHARED ${DLT_MONITOR_PLUGIN_SRC} ${PROTO_GLUE_CODE})
 
-ADD_LIBRARY (dlt-monitor-plugin SHARED ${DLT_MONITOR_PLUGIN_SRC} ${DLT_GEN_FILES})
-
-TARGET_LINK_LIBRARIES(dlt-monitor-plugin ${PROTO_BUF_LIB} ${POCO_LIB_FOUNDATION} ${POCO_LIB_UTIL} ${POCO_LIB_XML} ${POCO_LIB_NET} ${DLT_LIBRARIES} pthread)	
+TARGET_LINK_LIBRARIES(dlt-monitor-plugin 
+    ${PROTOBUF_LIBRARY} 
+    Poco::Foundation
+    Poco::Util
+    Poco::Net
+    Poco::XML
+    ${DLT_LIBRARIES} 
+    pthread
+    )	
 
 
 INSTALL(FILES ${CMAKE_BINARY_DIR}/bin/${BUILD_FOLDER_NAME}/${LINUX_LIB_PREFIX}dlt-monitor-plugin${DEBUG_SUFFIX}${LIBRARY_EXTENSION} DESTINATION ${CMAKE_INSTALL_PREFIX}/plugins/)

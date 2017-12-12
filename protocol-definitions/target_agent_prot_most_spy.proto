@@ -1,0 +1,95 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Elektrobit Automotive GmbH
+ * All rights reserved
+ *
+ * This file is part of project EB RACE
+ *
+ * Unauthorized copying of this file is strictly prohibited
+ *******************************************************************************/
+package TargetAgent.Protocol.MostSpy;
+
+option java_package = "com.elektrobit.ebrace.genivi.targetadapter.MostSpy.protobuf";
+option java_outer_classname = "MostSpy";
+	 
+enum MostSpyMajorVersion {
+	MOST_SPY_MAJOR_VERSION = 1;
+}
+
+/*! This version of the protocol does not handle the notifications
+	for thread started/stoped
+	*/
+enum MostSpyMinorVersion {
+	MOST_SPY_MINOR_VERSION = 1;
+}
+
+/*! Messages to and from Target Agent */
+enum MostSpyOpCodes {
+
+	MOST_SPY_OP_MESSAGE_INVALID 			= 0;
+	
+	//*! Messages to Target Agent */
+	MOST_SPY_OP_START_COLLECTING		= 1;/*!< MOST_SPY_OPTYPE_REQUEST: allowed, no param
+											 MOST_SPY_OPTYPE_RESPONSE: allowed, MostSpyCommandErrorCodes
+											 MOST_SPY_OPTYPE_NOTIFY: not allowed
+											 */
+	MOST_SPY_OP_STOP_COLLECTING		= 2;/*!< MOST_SPY_OPTYPE_REQUEST: allowed, no param
+											 MOST_SPY_OPTYPE_RESPONSE: allowed, MostSpyCommandErrorCodes
+											 MOST_SPY_OPTYPE_NOTIFY: not allowed
+											 */
+	MOST_SPY_OP_PROTOCOL_VERSION		= 4;/*!< MOST_SPY_OPTYPE_RESPONSE: MostSpyVersionInfo
+										     MOST_SPY_OPTYPE_RESPONSE: no param, MostSpyCommandErrorCodes
+											 MOST_SPY_OPTYPE_NOTIFY: invalid optype
+											 */
+	MOST_SPY_OP_MOST_MESSAGE		= 5;
+	MOST_SPY_OP_MOST_AVAILABILITY_CHANGED		= 6; 
+}
+
+
+enum MostSpyCommandErrorCodes {
+	MOST_SPY_RESULT_INVALID 	= 0;
+	MOST_SPY_RESULT_SUCCESS	= 1;
+	MOST_SPY_RESULT_PARAM_WRONG	= 2;
+	MOST_SPY_RESULT_EXEC_ERROR	= 3;
+	MOST_SPY_RESULT_PARSE_ERROR 	= 4;
+	MOST_SPY_RESULT_SPECIFIC	= 5;
+}
+
+enum MostSpyOpType {
+	MOST_SPY_OPTYPE_INVALID 	= 0;
+	MOST_SPY_OPTYPE_REQUEST	= 1;
+	MOST_SPY_OPTYPE_RESPONSE	= 2;
+	MOST_SPY_OPTYPE_NOTIFY	= 3;
+}
+
+
+//*! Message*/
+message MostSpyApplicationMessage {
+	//*! Operation Code*/	
+	required MostSpyOpCodes							messageID 			= 1;
+	//*! Operation type*/	
+	required MostSpyOpType							operationType 		= 2;
+	//*! only set for responses updates*/
+	optional MostSpyCommandErrorCodes                 errorCodes 			= 3;
+	//*! Protocol version Information */	
+	optional MostSpyVersionInfo			versionInfo			= 4;
+	//*! Protocol version Information */	
+	optional MostSpyMostMessage			mostMessage		= 5;	
+
+}
+
+
+message MostSpyVersionInfo {
+	required	int32	majorVersion = 1;
+	required	int32	minorVersion = 2;
+}
+
+
+
+message MostSpyMostMessage{
+	required uint32	FBlockID 				= 1;
+	required uint32	InstID	 				= 2;
+	required uint32 FktID 					= 3;
+	required uint32 OPType					= 4;
+	required string payload 				= 5;
+	optional string timestamp				= 6;
+}

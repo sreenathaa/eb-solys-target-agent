@@ -126,22 +126,20 @@ SUBDIRLIST(SUBDIRS ${CMAKE_SOURCE_DIR}/plugins)
 
 		string(REPLACE "-" "_" tmp_plugin_name ${plugin})
 		string(REPLACE "_plugin" "" tmp_plugin_name ${tmp_plugin_name})
-
 		#MESSAGE(STATUS "Converted Plugin Name::: ${tmp_plugin_name}")
 
 		#which definition correspond to our plugin?
-		FILE(GLOB PROTOCOL_DEFINITION_INPUT_FILES RELATIVE "${PROTOCOL_DEFINITION_SOURCE_DIR}"   "${PROTOCOL_DEFINITION_SOURCE_DIR}/target_agent_prot_${tmp_plugin_name}*.proto")			
-
+                FILE(GLOB PROTOCOL_DEFINITION_INPUT_FILES RELATIVE "${PROTOCOL_DEFINITION_SOURCE_DIR}"   "${PROTOCOL_DEFINITION_SOURCE_DIR}/target_agent_prot_${tmp_plugin_name}*.proto")
 
 		SET (PROTOBUF_GEN_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/plugins/${plugin}/gen)
 		
 		if (${PROTO_REMOVE_GEN_FILES})
-            file (GLOB remove_file "${CMAKE_SOURCE_DIR}/plugins/${plugin}/gen/*.*")
-            list(LENGTH remove_file RES_LEN)
-            if(NOT ${RES_LEN} EQUAL "0")
-                file (REMOVE ${remove_file})
-            endif()
-        endif()
+                    file (GLOB remove_file "${CMAKE_SOURCE_DIR}/plugins/${plugin}/gen/*.*")
+                    list(LENGTH remove_file RES_LEN)
+                    if(NOT ${RES_LEN} EQUAL "0")
+                        file (REMOVE ${remove_file})
+                    endif()
+                endif()
 		
 		foreach(PROTO_FILE ${PROTOCOL_DEFINITION_INPUT_FILES})
 			#get the name of the file without extension
@@ -160,6 +158,9 @@ SUBDIRLIST(SUBDIRS ${CMAKE_SOURCE_DIR}/plugins)
                     COMMAND ${Protobuf_PROTOC_EXECUTABLE} --include_imports --proto_path=${PROTOCOL_DEFINITION_SOURCE_DIR} --cpp_out=${PROTOBUF_GEN_OUTPUT_DIR} ${PROTOCOL_DEFINITION_SOURCE_DIR}/${PROTOCOL_DEFINITION_INPUT_FILES}
 		    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 		)
+
+
+	        MESSAGE(STATUS "JH::Compiling protobuf file ${PROTOCOL_DEFINITION_INPUT_FILES} in ${PROTOBUF_GEN_OUTPUT_DIR}")
 		
 		add_custom_target(proto_${plugin} ALL DEPENDS  ${PROTO_GEN_SOURCE_FILES} ${PROTO_GEN_HEADER_FILES})
 
@@ -202,13 +203,6 @@ ENDFOREACH()
 set(PLUGINS_TO_LOAD ${PLUGIN_LIST} PARENT_SCOPE)
 
 endfunction(load_plugins)
-
-
-##exception------> until fix plugins  generated file
-file (GLOB genFiles "${CMAKE_SOURCE_DIR}/plugins/most-spy-plugin/gen/*")
-file (COPY ${genFiles} DESTINATION "${CMAKE_SOURCE_DIR}/plugins/dbus-monitor-plugin/gen")
-file (COPY ${genFiles} DESTINATION "${CMAKE_SOURCE_DIR}/plugins/dlt-monitor-plugin/gen")
-#####
 
 load_plugins()
 
