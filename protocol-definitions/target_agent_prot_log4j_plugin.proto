@@ -1,0 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Elektrobit Automotive GmbH
+ * All rights reserved
+ *
+ * This file is part of project EB RACE
+ *
+ * Unauthorized copying of this file is strictly prohibited
+ *******************************************************************************/
+package TargetAgent.Protocol.Log4j;
+
+option java_package = "com.elektrobit.ebrace.targetdata.adapter.log4j";
+option java_outer_classname = "Log4jTAProto";
+
+message LogData {
+	required string trace 					= 1;
+	required string logLevel 				= 2;
+}
