@@ -42,7 +42,7 @@ For example
 	mkdir build
 	cd build
 	cmake ../eb-solys-target-agent -DTA_PLUGIN_dbus-monitor-plugin=true  -DTA_PLUGIN_socket-reader-plugin=true -DTA_PLUGIN_dlt-monitor-plugin=true -DTA_PLUGIN_resource-monitor-plugin=true -DCMAKE_BUILD_TYPE="Release"
-	make all
+	sudo make all
 	sudo make install
 
 	The default install folder may overwritten by setting the CMAKE_INSTALL_PREFIX variable.
